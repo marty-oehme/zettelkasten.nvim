@@ -1,5 +1,9 @@
 # Zettelkasten.nvim
 
+To develop / debug:
+
+start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
+
 ## TODO
 
 * [ ] go to zettel
