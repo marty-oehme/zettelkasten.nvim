@@ -1,22 +1,24 @@
+-- feature wishlist
+--  * note creation (new anchor)
+--  * link creation (to existing note)
+--  * link following (to existing anchor)
+--  * note search (title / full-text)
+--  * note listing (anchors / titles, no anchor)
+--  * options
+--    * zettel anchor regex
+--    * zettel anchor separator
+--    * zettel extension
 local ZK = {}
 
-local zettel_extension, anchor_separator
-
-local api
-if vim ~= nil then
-  api = vim.api
-  anchor_separator = vim.g["zettel_anchor_separator"] or vim.b["zettel_anchor_separator"] or "_"
-  zettel_extension = vim.g["zettel_extension"] or vim.b["zettel_extension"] or ".md"
-end
-package.loaded['zettelkasten'] = nil
-
-local anchor_separator = "_"
+local ls = require'zettelkasten.list'
 
 function ZK.init(vimapi)
   vim = vimapi or vim
-  anchor_separator = vim.g["zettel_anchor_separator"] or vim.b["zettel_anchor_separator"] or "_"
-  zettel_extension = vim.g["zettel_extension"] or vim.b["zettel_extension"] or ".md"
-  zettel_root = vim.g["zettel_extension"] or vim.b["zettel_extension"] or ".md"
+  ZK.options = {
+    anchor_separator = vim.g["zettel_anchor_separator"] or vim.b["zettel_anchor_separator"] or "_",
+    zettel_extension = vim.g["zettel_extension"] or vim.b["zettel_extension"] or ".md",
+    zettel_root = vim.g["zettel_root"] or vim.b["zettel_root"] or "~/documents/notes",
+  }
 end
 
 -- entrypoint for pressing the zettel key when the cursor
@@ -47,49 +49,23 @@ end
 -- and the text cleaned up to be useful in a link.
 function ZK.create_link(text, date)
   text = text or ""
+  local o = ZK.options
   if text == "" then
     text = "" .. ZK.create_anchor(date)
   else
     text = text:lower():gsub(" ", "-")
-    text = "" .. ZK.create_anchor(date) .. anchor_separator .. text
+    text = "" .. ZK.create_anchor(date) .. o.anchor_separator .. text
   end
-  return text .. (zettel_extension or ".md")
+  return text .. (o.zettel_extension or ".md")
 end
 
-function ZK._get_anchors_and_paths(path, recursive)
-  -- TODO check for duplicates and warn user
-  local zettel = {}
-  local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*.md$'
-
-  local handle = vim.loop.fs_scandir(path)
-  while handle do
-    local name, ftype = vim.loop.fs_scandir_next(handle)
-    if not name then break end
-
-    if ftype == 'directory' and recursive then
-      local subdir = ZK._get_anchors_and_paths(path .. "/" .. name, true)
-      for k, v in pairs(subdir) do
-        zettel[tostring(k)] = v
-      end
-    end
-
-    local anchor = string.match(name, anchorreg)
-    if anchor then
-      zettel[tostring(anchor)] = name
-    end
-  end
-  return zettel
-end
 
 -- Returns all zettel in path as a
 -- { "anchor" = "path/to/zettel/anchor filename.md" }
 -- table.
 -- Recurses into subdirectories if recursive argument is true.
 function ZK.get_zettel_list(path, recursive)
-  -- TODO transform paths:
-  --    * to absolute value (e.g. ~ to home, scandir needs absolute)
-  --    * to ensure / at the end (or no /) gets taken into account
-  return ZK._get_anchors_and_paths(path, recursive or false)
+  return ls.get_anchors_and_paths(path, recursive or false)
 end
 
 return {
