@@ -1,9 +1,9 @@
-ZK = require 'zettelkasten.init'
+ls = require'zettelkasten.list'
 -- these tests, I suppose, only work on unix due to the file structure
 
 describe("zettel listing", function()
     before_each(function()
-        get_api_mock = function(files)
+        _G.get_api_mock = function(files)
             return {
                 g = {},
                 b = {},
@@ -22,14 +22,18 @@ describe("zettel listing", function()
             }
         end
     end)
+    after_each(function()
+        _G.get_api_mock = nil
+        _G.vim = nil
+    end)
 
     it("should return anchor-keyed table pointing to filename of zettel",
        function()
         local file_list = {"1910291645 this-is-a-testfile.md"}
-        ZK.init(get_api_mock(file_list))
+        _G.vim = get_api_mock(file_list)
 
         local expected = {["1910291645"] = "1910291645 this-is-a-testfile.md"}
-        assert.same(expected, ZK.get_zettel_list("someDir"))
+        assert.same(expected, ls.get_anchors_and_paths("someDir"))
     end)
 
     it("should ignore any malformed files", function()
@@ -38,13 +42,13 @@ describe("zettel listing", function()
             "1910291645 this-is-a-testfile.md", "this-is-not-a-testfile.md",
             "1910271456 this-is-wrong-extension.txt", "1812 this-is-ignored.md"
         }
-        ZK.init(get_api_mock(file_list))
+        _G.vim = get_api_mock(file_list)
 
         local expected = {
             ["1910291645"] = "1910291645 this-is-a-testfile.md",
             ["2010261208"] = "2010261208 this-should-be-picked-up.md"
         }
-        assert.same(expected, ZK.get_zettel_list("someDir"))
+        assert.same(expected, ls.get_anchors_and_paths("someDir"))
     end)
 
     it("should recurse into directories if recursive argument passed in ",
@@ -72,9 +76,9 @@ describe("zettel listing", function()
                 end
             })
         }
-        ZK.init(vim_api_mock)
+        _G.vim = vim_api_mock
 
-        ZK.get_zettel_list("path/to/startingdir", true)
+        ls.get_anchors_and_paths("path/to/startingdir", true)
 
         assert.spy(vim_api_mock.loop.fs_scandir).was_called(2)
         assert.spy(vim_api_mock.loop.fs_scandir).was_called_with(
@@ -111,28 +115,27 @@ describe("zettel listing", function()
                 end
             }
         }
-        ZK.init(vim_api_mock)
+        _G.vim = vim_api_mock
         local expected = {
             ["1234567890"] = "1234567890 myfile.md",
             ["2345678901"] = "2345678901 another.md",
             ["2222222222"] = "2222222222 should-be-present.md",
             ["3333333333"] = "3333333333 should-also-be-present.md"
         }
-        assert.same(expected, ZK.get_zettel_list('mydirectory', true))
+        assert.same(expected, ls.get_anchors_and_paths('mydirectory', true))
     end)
 
     it("should adhere to the zettel extension defined in options", function()
         local file_list = {"1910291645 myfile.wiki", "2345678901 another.wiki"}
-        local vim = get_api_mock(file_list)
+        _G.vim = get_api_mock(file_list)
         vim.g['zettel_extension'] = '.wiki'
-        ZK.init(vim)
 
         local expected = {
             ["1910291645"] = "1910291645 myfile.wiki",
             ["2345678901"] = "2345678901 another.wiki"
         }
 
-        assert.same(expected, ZK.get_zettel_list('mydirectory'))
+        assert.same(expected, ls.get_anchors_and_paths('mydirectory', false, vim.g))
 
     end)
 
