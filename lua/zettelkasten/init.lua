@@ -1,13 +1,3 @@
--- feature wishlist
---  * note creation (new anchor)
---  * link creation (to existing note)
---  * link following (to existing anchor)
---  * note search (title / full-text)
---  * note listing (anchors / titles, no anchor)
---  * options
---    * zettel anchor regex
---    * zettel anchor separator
---    * zettel extension
 local ZK = {}
 
 local ls = require'zettelkasten.list'
