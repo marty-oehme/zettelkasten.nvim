@@ -126,7 +126,40 @@ describe("Zettelkasten", function()
 
       assert.spy(vim_api_mock.loop.fs_scandir).was_called(2)
       assert.spy(vim_api_mock.loop.fs_scandir).was_called_with("path/to/startingdir/more-notes-here")
-      end)
-
     end)
+
+    it("should append all notes found in subdirectories when recursing", function()
+      local outer_files = { "subdir", "1234567890 myfile.md", "2345678901 another.md", }
+      local inner_files = { "2222222222 should-be-present.md", "3333333333 should-also-be-present.md" }
+      local files = outer_files
+      -- assert.is_true("not implemented")
+      local vim_api_mock = {
+        g = {},
+        b = {},
+        loop ={
+          fs_scandir = function()
+            if #files == 0 then return false end
+            return true
+          end,
+          fs_scandir_next = function()
+            if #files == 0 then return nil end
+            local fname, ftype = table.remove(files), 'file'
+            if fname == "subdir" then
+              files = inner_files
+              ftype = 'directory'
+            end
+            return fname, ftype
+          end
+      }}
+      ZK.init(vim_api_mock)
+      local expected = {
+        ["1234567890"] = "1234567890 myfile.md",
+        ["2345678901"] = "2345678901 another.md",
+        ["2222222222"] = "2222222222 should-be-present.md",
+        ["3333333333"] = "3333333333 should-also-be-present.md",
+      }
+      assert.same(expected, ZK.get_zettel_list('mydirectory', true))
+    end)
+
   end)
+end)

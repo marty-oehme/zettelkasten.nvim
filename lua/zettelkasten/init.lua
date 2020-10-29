@@ -56,7 +56,7 @@ function ZK.create_link(text, date)
   return text .. (zettel_extension or ".md")
 end
 
-local function _get_anchors_and_paths(path, recursive)
+function ZK._get_anchors_and_paths(path, recursive)
   -- TODO check for duplicates and warn user
   local zettel = {}
   local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*.md$'
@@ -67,7 +67,10 @@ local function _get_anchors_and_paths(path, recursive)
     if not name then break end
 
     if ftype == 'directory' and recursive then
-      local subdir = _get_anchors_and_paths(path .. "/" .. name, true)
+      local subdir = ZK._get_anchors_and_paths(path .. "/" .. name, true)
+      for k, v in pairs(subdir) do
+        zettel[tostring(k)] = v
+      end
     end
 
     local anchor = string.match(name, anchorreg)
@@ -83,7 +86,10 @@ end
 -- table.
 -- Recurses into subdirectories if recursive argument is true.
 function ZK.get_zettel_list(path, recursive)
-  return _get_anchors_and_paths(path, recursive or false)
+  -- TODO transform paths:
+  --    * to absolute value (e.g. ~ to home, scandir needs absolute)
+  --    * to ensure / at the end (or no /) gets taken into account
+  return ZK._get_anchors_and_paths(path, recursive or false)
 end
 
 return {
