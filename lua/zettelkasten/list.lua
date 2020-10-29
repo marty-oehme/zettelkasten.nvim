@@ -8,10 +8,12 @@ end
 -- TODO transform paths:
 --    * to absolute value (e.g. ~ to home, scandir needs absolute)
 --    * to ensure / at the end (or no /) gets taken into account
-function ls.get_anchors_and_paths(path, recursive)
+function ls.get_anchors_and_paths(path, recursive, options)
+    options = options or {}
     -- TODO check for duplicates and warn user
     local zettel = {}
-    local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*.md$'
+    local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*%' ..
+                          (options.zettel_extension or '.md') .. '$'
 
     local handle = vim.loop.fs_scandir(path)
     while handle do

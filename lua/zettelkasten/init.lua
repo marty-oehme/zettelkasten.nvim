@@ -58,7 +58,7 @@ end
 -- table.
 -- Recurses into subdirectories if recursive argument is true.
 function ZK.get_zettel_list(path, recursive)
-    return ls.get_anchors_and_paths(path, recursive or false)
+    return ls.get_anchors_and_paths(path, recursive or false, ZK.options)
 end
 
 return {
