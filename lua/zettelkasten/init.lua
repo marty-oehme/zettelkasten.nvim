@@ -16,6 +16,7 @@ function ZK.init(vimapi)
   vim = vimapi or vim
   anchor_separator = vim.g["zettel_anchor_separator"] or vim.b["zettel_anchor_separator"] or "_"
   zettel_extension = vim.g["zettel_extension"] or vim.b["zettel_extension"] or ".md"
+  zettel_root = vim.g["zettel_extension"] or vim.b["zettel_extension"] or ".md"
 end
 
 -- entrypoint for pressing the zettel key when the cursor
@@ -55,9 +56,40 @@ function ZK.create_link(text, date)
   return text .. (zettel_extension or ".md")
 end
 
+local function _get_anchors_and_paths(path, recursive)
+  -- TODO check for duplicates and warn user
+  local zettel = {}
+  local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*.md$'
+
+  local handle = vim.loop.fs_scandir(path)
+  while handle do
+    local name, ftype = vim.loop.fs_scandir_next(handle)
+    if not name then break end
+
+    if ftype == 'directory' and recursive then
+      local subdir = _get_anchors_and_paths(path .. "/" .. name, true)
+    end
+
+    local anchor = string.match(name, anchorreg)
+    if anchor then
+      zettel[tostring(anchor)] = name
+    end
+  end
+  return zettel
+end
+
+-- Returns all zettel in path as a
+-- { "anchor" = "path/to/zettel/anchor filename.md" }
+-- table.
+-- Recurses into subdirectories if recursive argument is true.
+function ZK.get_zettel_list(path, recursive)
+  return _get_anchors_and_paths(path, recursive or false)
+end
+
 return {
   init = ZK.init,
   zettel_link_create = ZK.zettel_link_create,
   create_anchor = ZK.create_anchor,
   create_link = ZK.create_link,
+  get_zettel_list = ZK.get_zettel_list,
 }

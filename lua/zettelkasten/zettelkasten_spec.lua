@@ -1,7 +1,11 @@
-ZK = require'init'
+ZK = require'lua.zettelkasten.init'
 Test_date={ year=2019, month=10, day=29, hour=16, min=45 }
 
 describe("Zettelkasten", function()
+  before_each(function()
+    ZK.init({ g={}, b={} })
+  end)
+
   describe("anchor creation", function()
     it("should return zettel anchor from time passed in", function()
       assert.same("1910291645", ZK.create_anchor(Test_date))
@@ -15,6 +19,7 @@ describe("Zettelkasten", function()
       assert.is_nil(ZK.create_anchor("My grandmother is lovely."))
     end)
   end)
+
   describe("link creation", function()
     it("should return a markdown link with only zettel anchor on no text passed in", function()
       assert.same("1910291645.md", ZK.create_link(nil, Test_date))
@@ -43,7 +48,85 @@ describe("Zettelkasten", function()
       ZK.init(vim)
       assert.same("1910291645_theworld.something", ZK.create_link("theworld", Test_date))
     end)
-
-
   end)
-end)
+
+  -- these tests, I suppose, only work on unix due to the file structure
+  describe("zettel listing", function()
+    before_each(function()
+      get_api_mock = function(files)
+        return {
+          g = {},
+          b = {},
+          loop = {
+            fs_scandir = function()
+              if #files == 0 then
+                return false
+              else
+                return true
+              end
+            end,
+            fs_scandir_next = function() return table.remove(files) end
+          }
+        }
+      end
+    end)
+
+    it("should return anchor-keyed table pointing to filename of zettel", function()
+      local file_list = { "1910291645 this-is-a-testfile.md" }
+      ZK.init(get_api_mock(file_list))
+
+      local expected = { ["1910291645"] = "1910291645 this-is-a-testfile.md", }
+      assert.same(expected, ZK.get_zettel_list("someDir"))
+    end)
+
+    it("should ignore any malformed files", function()
+      local file_list = {
+        "2010261208 this-should-be-picked-up.md",
+        "1910291645 this-is-a-testfile.md",
+        "this-is-not-a-testfile.md",
+        "1910271456 this-is-wrong-extension.txt",
+        "1812 this-is-ignored.md",
+      }
+      ZK.init(get_api_mock(file_list))
+
+      local expected = {
+        ["1910291645"] = "1910291645 this-is-a-testfile.md",
+        ["2010261208"] = "2010261208 this-should-be-picked-up.md",
+      }
+      assert.same(expected, ZK.get_zettel_list("someDir"))
+    end)
+
+    it("should recurse into directories if recursive argument passed in ", function()
+      local files = {
+        { "1910271456 testfile.md", "file" },
+        { "more-notes-here", "directory" },
+        { "2010261208 another-testfile.md", "file" },
+      }
+      local vim_api_mock = {
+          g = {},
+          b = {},
+          loop = mock({
+            fs_scandir = function()
+              if #files == 0 then
+                return false
+              else
+                return true
+              end
+            end,
+            fs_scandir_next = function()
+              if #files == 0 then return nil end
+              local fname, ftype = unpack(table.remove(files))
+              return fname, ftype
+            end
+          })
+        }
+      ZK.init(vim_api_mock)
+
+      ZK.get_zettel_list("path/to/startingdir", true)
+
+      assert.spy(vim_api_mock.loop.fs_scandir).was_called(2)
+      assert.spy(vim_api_mock.loop.fs_scandir).was_called_with("path/to/startingdir/more-notes-here")
+      end)
+
+    end)
+  end)
