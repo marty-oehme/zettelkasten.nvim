@@ -1,4 +1,4 @@
-ls = require'zettelkasten.list'
+local ls = require 'zettelkasten.list'
 -- these tests, I suppose, only work on unix due to the file structure
 
 local function simple_api_mock(files)
@@ -13,20 +13,14 @@ local function simple_api_mock(files)
                     return true
                 end
             end,
-            fs_scandir_next = function()
-                return table.remove(files)
-            end
+            fs_scandir_next = function() return table.remove(files) end
         }
     }
 end
 
 describe("get_anchors_and_paths", function()
-    before_each(function()
-        get_api_mock = simple_api_mock
-    end)
-    after_each(function()
-        _G.vim = nil
-    end)
+    before_each(function() get_api_mock = simple_api_mock end)
+    after_each(function() _G.vim = nil end)
 
     it("should return anchor-keyed table pointing to filename of zettel",
        function()
@@ -136,19 +130,37 @@ describe("get_anchors_and_paths", function()
             ["2345678901"] = "2345678901 another.wiki"
         }
 
-        assert.same(expected, ls.get_anchors_and_paths('mydirectory', false, vim.g))
+        assert.same(expected,
+                    ls.get_anchors_and_paths('mydirectory', false, vim.g))
 
     end)
+
+    it("should default to the zettel root dir",
+       function() pending("not implemented") end)
 end)
 
 describe("get_zettel", function()
     it("should return the correct zettel by id", function()
         local file_list = {
             ["1910291645"] = "1910291645 myfile.md",
-            ["2345678901"] = "2345678901 another.md",
+            ["2345678901"] = "2345678901 another.md"
         }
         _G.vim = simple_api_mock(file_list)
 
-        assert.same("1910291645 myfile.md", ls.get_zettel("1910291645", file_list))
+        assert.same("1910291645 myfile.md",
+                    ls.get_zettel("1910291645", file_list))
     end)
+
+    it("should default to the zettel root dir if no list passed in", function()
+        local file_list = {"1910291645 myfile.wiki", "2345678901 another.wiki"}
+        _G.vim = simple_api_mock(file_list)
+
+        pending("not implemented")
+        assert.same("1910291645 myfile.wiki", ls.get_zettel("1910291645"))
+    end)
+end)
+
+describe("open_zettel", function()
+    it("should set the current buffer to the zettel passed in as anchor",
+       function() pending("not implemented") end)
 end)

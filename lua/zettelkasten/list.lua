@@ -35,8 +35,11 @@ end
 -- Take a list of zettel as an optional variable, without which
 -- it will use the (recursive) results of the zettel_root directory.
 function ls.get_zettel(anchor, all)
+    if not all then all = ls.get_anchors_and_paths('somepath') end
+
     return all[anchor]
 end
 
+function ls.open_zettel(anchor, all) end
 
 return ls

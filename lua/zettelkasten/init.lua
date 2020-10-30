@@ -1,18 +1,7 @@
 local ZK = {}
 
 local ls = require 'zettelkasten.list'
-
-function ZK.init(vimapi)
-    vim = vimapi or vim
-    ZK.options = {
-        anchor_separator = vim.g["zettel_anchor_separator"] or
-            vim.b["zettel_anchor_separator"] or "_",
-        zettel_extension = vim.g["zettel_extension"] or
-            vim.b["zettel_extension"] or ".md"
-        -- zettel_root = vim.g["zettel_root"] or vim.b["zettel_root"] or "~/documents/notes",
-        -- TODO zettel_anchor_pattern = regex? -> needs custom creation function in `create_anchor`
-    }
-end
+local o = require 'zettelkasten.options'
 
 -- entrypoint for pressing the zettel key when the cursor
 -- is either on an existing link  (it will then
@@ -42,15 +31,13 @@ end
 -- and the text cleaned up to be useful in a link.
 function ZK.create_link(text, date)
     text = text or ""
-    local o = ZK.options
     if text == "" then
         text = "" .. ZK.create_anchor(date)
     else
         text = text:lower():gsub(" ", "-")
-        text = "" .. ZK.create_anchor(date) .. (o.anchor_separator or "_") ..
-                   text
+        text = "" .. ZK.create_anchor(date) .. o.anchor().separator .. text
     end
-    return text .. (o.zettel_extension or ".md")
+    return text .. o.zettel().extension
 end
 
 -- Returns all zettel in path as a
@@ -62,7 +49,6 @@ function ZK.get_zettel_list(path, recursive)
 end
 
 return {
-    init = ZK.init,
     zettel_link_create = ZK.zettel_link_create,
     create_anchor = ZK.create_anchor,
     create_link = ZK.create_link,

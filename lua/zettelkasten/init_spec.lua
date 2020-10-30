@@ -2,7 +2,8 @@ ZK = require 'zettelkasten.init'
 Test_date = {year = 2019, month = 10, day = 29, hour = 16, min = 45}
 
 describe("Zettelkasten", function()
-    before_each(function() ZK.init({g = {}, b = {}}) end)
+    before_each(function() _G.vim = {g = {}, b = {}} end)
+    after_each(function() _G.vim = nil end)
 
     describe("anchor creation", function()
         it("should return zettel anchor from time passed in", function()
@@ -42,19 +43,27 @@ describe("Zettelkasten", function()
                         ZK.create_link("yes indeed a space", Test_date))
         end)
 
-        it(
-            "should place the contents of g:zettel_anchor_separator variable in link",
-            function()
-                vim = {g = {zettel_anchor_separator = "SEP"}, b = {}}
-                ZK.init(vim)
-                assert.same("1910291645SEParated.md",
-                            ZK.create_link("arated", Test_date))
-            end)
+        it("should add contents of g:zettel_anchor_separator variable to link",
+           function()
+            vim.g.zettel_anchor_separator = "SEP"
+            assert.same("1910291645SEParated.md",
+                        ZK.create_link("arated", Test_date))
+        end)
+        it("should add contents of b:zettel_anchor_separator variable to link",
+           function()
+            vim.b.zettel_anchor_separator = "---"
+            assert.same("1910291645---arated.md",
+                        ZK.create_link("arated", Test_date))
+        end)
 
         it("should append the filetype set in g:zettel_extension", function()
-            vim = {g = {zettel_extension = ".something"}, b = {}}
-            ZK.init(vim)
+            vim.g.zettel_extension = ".something"
             assert.same("1910291645_theworld.something",
+                        ZK.create_link("theworld", Test_date))
+        end)
+        it("should append the filetype set in b:zettel_extension", function()
+            vim.b.zettel_extension = ".somethingelse"
+            assert.same("1910291645_theworld.somethingelse",
                         ZK.create_link("theworld", Test_date))
         end)
     end)
