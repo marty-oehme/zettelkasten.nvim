@@ -31,4 +31,12 @@ function ls.get_anchors_and_paths(path, recursive, options)
     return zettel
 end
 
+-- Returns the path to the zettel defined by the anchor argument.
+-- Take a list of zettel as an optional variable, without which
+-- it will use the (recursive) results of the zettel_root directory.
+function ls.get_zettel(anchor, all)
+    return all[anchor]
+end
+
+
 return ls

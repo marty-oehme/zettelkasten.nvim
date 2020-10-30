@@ -1,29 +1,30 @@
 ls = require'zettelkasten.list'
 -- these tests, I suppose, only work on unix due to the file structure
 
-describe("zettel listing", function()
+local function simple_api_mock(files)
+    return {
+        g = {},
+        b = {},
+        loop = {
+            fs_scandir = function()
+                if #files == 0 then
+                    return false
+                else
+                    return true
+                end
+            end,
+            fs_scandir_next = function()
+                return table.remove(files)
+            end
+        }
+    }
+end
+
+describe("get_anchors_and_paths", function()
     before_each(function()
-        _G.get_api_mock = function(files)
-            return {
-                g = {},
-                b = {},
-                loop = {
-                    fs_scandir = function()
-                        if #files == 0 then
-                            return false
-                        else
-                            return true
-                        end
-                    end,
-                    fs_scandir_next = function()
-                        return table.remove(files)
-                    end
-                }
-            }
-        end
+        get_api_mock = simple_api_mock
     end)
     after_each(function()
-        _G.get_api_mock = nil
         _G.vim = nil
     end)
 
@@ -138,5 +139,16 @@ describe("zettel listing", function()
         assert.same(expected, ls.get_anchors_and_paths('mydirectory', false, vim.g))
 
     end)
+end)
 
+describe("get_zettel", function()
+    it("should return the correct zettel by id", function()
+        local file_list = {
+            ["1910291645"] = "1910291645 myfile.md",
+            ["2345678901"] = "2345678901 another.md",
+        }
+        _G.vim = simple_api_mock(file_list)
+
+        assert.same("1910291645 myfile.md", ls.get_zettel("1910291645", file_list))
+    end)
 end)
