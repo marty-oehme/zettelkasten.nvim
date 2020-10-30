@@ -10,20 +10,22 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
   * [x] create anchor
     * [ ] *unique* anchor creation
   * [ ] create link (md / wiki)
-* [ ] link creation (to existing note)
-  * [ ] list existing
-  * [ ] create link (md / wiki)
-* [ ] link following (to existing anchor)
-* [ ] note search (title / full-text)
 * [ ] note listing (anchors / titles, no anchor)
   * [ ] list anchors
   * [ ] list filenames
+* [ ] link following (to existing anchor)
+* [ ] link creation (to existing note)
+  * [ ] list existing
+  * [ ] create link (md / wiki)
+* [ ] link switching (to another existing note)
+* [ ] note search (title / full-text)
 * [ ] jump to zettel (open existing anchor)
   * [ ] select by anchor
   * [ ] select by (fuzzy) title match
 * [ ] options
  * [x] zettel anchor separator
- * [ ] zettel extension
+ * [x] zettel extension
+ * [ ] recursive lookup for zettel
  * [ ] zettel anchor regex
 * [ ] backlinks (via rg for filename anchor?)
   * [ ] keep tree of notes cached?
