@@ -25,6 +25,7 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
 * [ ] options
  * [x] zettel anchor separator
  * [x] zettel extension
+ * [ ] link style (wiki/markdown) custom?
  * [ ] recursive lookup for zettel
  * [ ] zettel anchor regex
 * [ ] backlinks (via rg for filename anchor?)
