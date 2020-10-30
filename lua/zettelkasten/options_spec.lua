@@ -28,4 +28,19 @@ describe("zettel options", function()
     end)
     it("should return the default anchor separator if not set in vim",
        function() assert.same("_", opt.anchor().separator) end)
+
+    it("should return the global link style if set in vim", function()
+        _G.vim.g.zettel_link_style = "wiki"
+        assert.same("wiki", opt.zettel().link_style)
+    end)
+    it("should return the buffer link style if set in vim", function()
+        _G.vim.b.zettel_link_style = "wiki"
+        assert.same("wiki", opt.zettel().link_style)
+    end)
+    it("should return the default link style if not set in vim",
+       function() assert.same("markdown", opt.zettel().link_style) end)
+    it("should error on entries other than markdown/wiki", function()
+        _G.vim.g.zettel_link_style = "idontbelong"
+        assert.is_error(function() opt.zettel() end)
+    end)
 end)

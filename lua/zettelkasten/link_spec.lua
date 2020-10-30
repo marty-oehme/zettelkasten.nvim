@@ -89,3 +89,20 @@ describe("style_wiki", function()
                     link.style_wiki("1910291645", "  hi     "))
     end)
 end)
+
+describe("create_link", function()
+    it("should create a working link using set options in vim", function()
+        vim.g.zettel_extension = ".md"
+        vim.g.zettel_anchor_separator = "_"
+        vim.g.zettel_link_style = "markdown"
+        assert.same("[My FILE NAME](1910291645_my-file-name.md)",
+                    link.create("1910291645", "My FILE NAME"))
+    end)
+    it("should create a working link if style is manually set", function()
+        vim.g.zettel_extension = ".md"
+        vim.g.zettel_anchor_separator = "_"
+        vim.g.zettel_link_style = "markdown"
+        assert.same("[[1910291645|My FILE NAME]]",
+                    link.create("1910291645", "My FILE NAME", "wiki"))
+    end)
+end)

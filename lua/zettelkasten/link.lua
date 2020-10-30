@@ -51,4 +51,21 @@ function L.style_wiki(link, text)
     return "[[" .. link .. pipe .. "]]"
 end
 
+-- Returns the correctly formatted link to a zettel with the anchor passed in.
+-- Takes an optional link text which will be added to the link.
+-- Takes an optional style according to which the link will be transformed.
+function L.create(anchor, text, style)
+    local link = L.clean(text)
+    style = style or o.zettel().link_style
+
+    if style == "markdown" then
+        link = L.append_extension(L.prepend_anchor(anchor, link))
+        return L.style_markdown(link, text)
+
+    elseif style == "wiki" then
+        return L.style_wiki(anchor, text)
+    end
+    error("Link creation failed.")
+end
+
 return L
