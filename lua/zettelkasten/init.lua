@@ -12,6 +12,9 @@ function ZK.get_zettel_list(path, recursive)
     return ls.get_anchors_and_paths(path, recursive or false, ZK.options)
 end
 
+-- Return a valid zettelkasten anchor for the current time,
+-- composed of yymmddHHMM.
+function ZK.create_anchor() return a.create() end
 
 return {
     get_zettel_list = ZK.get_zettel_list

@@ -1,7 +1,11 @@
-" for DEBUGGING ONLY: reloads the whole lua plugin
+" TODO remove after debugging
+if exists('g:loaded_zettelkasten')
+  finish
+endif
+" TODO for DEBUGGING ONLY: reloads the whole lua plugin
 fun! ZKReload()
   lua for k in pairs(package.loaded) do if k:match("^zettelkasten")  then package.loaded[k] = nil end end
-  lua require 'zettelkasten'.init()
+  lua require 'zettelkasten'
 endfun
 nnoremap <leader>R :call ZKReload()<cr>
 
@@ -9,7 +13,11 @@ augroup Zettelkasten
   autocmd!
 augroup END
 
+" example plug mappings
 " nnoremap <Plug>Zettel_Link :call zettelkasten#zettel_link()<cr>
-nnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.zettel_link_create()<cr>
+nnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.create_zettel()<cr>
+vnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.create_zettel()<cr>
+nmap <leader>i <Plug>zettel_link_create
+vmap <leader>i <Plug>zettel_link_create
 
-nmap <leader>n <Plug>zettel_link_create
+let g:loaded_zettelkasten = 1

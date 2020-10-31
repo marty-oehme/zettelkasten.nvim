@@ -4,12 +4,12 @@ To develop / debug:
 
 start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
 
-## TODO: feature wishlist
+## TODO: needed functionality
 
 * [ ] note creation (new anchor)
   * [x] create anchor
     * [ ] *unique* anchor creation
-  * [ ] create link (md / wiki)
+  * [x] create link (md / wiki)
 * [ ] note listing (anchors / titles, no anchor)
   * [ ] list anchors
   * [ ] list filenames
@@ -25,19 +25,24 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
 * [ ] options
  * [x] zettel anchor separator
  * [x] zettel extension
- * [ ] link style (wiki/markdown) custom?
- * [ ] recursive lookup for zettel
+ * [x] link style (wiki/markdown)
+  * [ ] custom link style?
+ * [ ] recursive dir lookup for zettel
  * [ ] zettel anchor regex
-* [ ] backlinks (via rg for filename anchor?)
-  * [ ] keep tree of notes cached?
+
+## TODO: nice-to-haves
+
 * [ ] completion engine (e.g. for `completion-nvim`, look in completion_buffers/completion-tags for reference)
 * [ ] zettel caching for big directories
+* [ ] backlinks (via rg for filename anchor?)
+  * [ ] keep tree of notes cached?
 * [ ] zettel maintenance
   * [ ] fix malformed anchors
   * [ ] add missing anchors
   * [ ] 'rename' anchor (goes against stability?)
   * [ ] recognize duplicate anchors (in directory, when listing, etc)
     * [ ] provide option to rename and automatically change backlinks
+* [ ] zettel 'lens' (preview first headline + content of linked zettel through floating window etc, on keypress)
 
 * anchor creation
   * *must* be unique

@@ -4,42 +4,13 @@ Test_date = {year = 2019, month = 10, day = 29, hour = 16, min = 45}
 before_each(function() _G.vim = {g = {}, b = {}} end)
 after_each(function() _G.vim = nil end)
 
-describe("prepend_anchor", function()
-    it("should append text to link", function()
-        assert.same("1910291645_isappended",
-                    link.prepend_anchor("1910291645", "isappended"))
-    end)
-    it("should not add a separator if no text appended", function()
-        assert.same("1910291645", link.prepend_anchor("1910291645", ""))
-    end)
-
-    it("should return solely the anchor if no text is passed in", function()
-        assert.same("1910291645", link.prepend_anchor("1910291645", nil))
-    end)
-    it("should return solely the anchor if empty text is passed in", function()
-        assert.same("1910291645", link.prepend_anchor("1910291645", ""))
-    end)
-    it("should add contents of g:zettel_anchor_separator variable to link",
-       function()
-        vim.g.zettel_anchor_separator = "SEP"
-        assert.same("1910291645SEParated",
-                    link.prepend_anchor("1910291645", "arated"))
-    end)
-    it("should add contents of b:zettel_anchor_separator variable to link",
-       function()
-        vim.b.zettel_anchor_separator = "---"
-        assert.same("1910291645---arated",
-                    link.prepend_anchor("1910291645", "arated"))
-    end)
-end)
-
-describe("clean", function()
+describe("urlify", function()
     it("should return lowercased link text", function()
-        assert.same("yesiamshouting", link.clean("YESIAMSHOUTING"))
+        assert.same("yesiamshouting", link.urlify("YESIAMSHOUTING"))
     end)
 
     it("should return spaces in text replaced with dashes", function()
-        assert.same("yes-indeed-a-space", link.clean("yes indeed a space"))
+        assert.same("yes-indeed-a-space", link.urlify("yes indeed a space"))
     end)
 end)
 
