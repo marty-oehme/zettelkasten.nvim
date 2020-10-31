@@ -16,6 +16,4 @@ end
 -- composed of yymmddHHMM.
 function ZK.create_anchor() return a.create() end
 
-return {
-    get_zettel_list = ZK.get_zettel_list
-}
+return {get_zettel_list = ZK.get_zettel_list, create_anchor = ZK.create_anchor}
