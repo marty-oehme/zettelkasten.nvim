@@ -61,7 +61,7 @@ describe("style_wiki", function()
     end)
 end)
 
-describe("create_link", function()
+describe("create", function()
     it("should create a working link using set options in vim", function()
         vim.g.zettel_extension = ".md"
         vim.g.zettel_anchor_separator = "_"
@@ -75,5 +75,11 @@ describe("create_link", function()
         vim.g.zettel_link_style = "markdown"
         assert.same("[[1910291645|My FILE NAME]]",
                     link.create("1910291645", "My FILE NAME", "wiki"))
+    end)
+    it("should handle empty text", function()
+        vim.g.zettel_extension = ".wiki"
+        vim.g.zettel_anchor_separator = "_"
+        vim.g.zettel_link_style = "wiki"
+        assert.same("[[1910291645]]", link.create("1910291645"))
     end)
 end)

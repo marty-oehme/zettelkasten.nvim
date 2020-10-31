@@ -23,6 +23,7 @@ end
 -- Returns text with surrounding whitespace trimmed. Returns empty string
 -- if only whitespace.
 local function trimmed(text)
+    if not text then return end
     return text:match '^()%s*$' and '' or text:match '^%s*(.*%S)'
 end
 
@@ -45,7 +46,8 @@ function L.style_wiki(link, text)
     return "[[" .. link .. pipe .. "]]"
 end
 
--- Returns a correctly formatted link to a new zettel.
+-- Returns a correctly formatted link to a zettel.
+-- Requires an anchor to be passed in.
 -- Takes an optional link text which will be added to the link.
 -- Takes an optional style according to which the link will be transformed.
 function L.create(anchor, text, style)
