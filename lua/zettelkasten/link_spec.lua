@@ -62,24 +62,38 @@ describe("style_wiki", function()
 end)
 
 describe("create", function()
-    it("should create a working link using set options in vim", function()
+    before_each(function()
         vim.g.zettel_extension = ".md"
         vim.g.zettel_anchor_separator = "_"
         vim.g.zettel_link_style = "markdown"
+    end)
+    after_each(function() vim.g = nil end)
+    it("should create a working link using set options in vim", function()
         assert.same("[My FILE NAME](1910291645_my-file-name.md)",
                     link.create("1910291645", "My FILE NAME"))
     end)
     it("should create a working link if style is manually set", function()
-        vim.g.zettel_extension = ".md"
-        vim.g.zettel_anchor_separator = "_"
-        vim.g.zettel_link_style = "markdown"
         assert.same("[[1910291645|My FILE NAME]]",
                     link.create("1910291645", "My FILE NAME", "wiki"))
     end)
-    it("should handle empty text", function()
+    it("should not error on empty text", function()
         vim.g.zettel_extension = ".wiki"
         vim.g.zettel_anchor_separator = "_"
         vim.g.zettel_link_style = "wiki"
         assert.same("[[1910291645]]", link.create("1910291645"))
+    end)
+end)
+
+describe("new", function()
+    it("should create a link out of only text input", function()
+        local result = link.new("My FILE NAME")
+        assert.is_not_nil(result:match(
+                              "%[My FILE NAME%]%(.*_my%-file%-name%.md%)"))
+    end)
+    it("should be callable without any parameters, using default settings",
+       function()
+        vim.g.zettel_link_style = "wiki"
+        local result = link.new()
+        assert.is_not_nil(result:match("%[%[[^|]+%]%]"))
     end)
 end)

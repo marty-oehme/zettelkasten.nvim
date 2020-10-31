@@ -63,4 +63,12 @@ function L.create(anchor, text, style)
     error("Link creation failed.")
 end
 
+-- Returns a correctly formatted link to a new zettel (without anchor).
+-- Takes an optional link text which will be added to the link.
+-- Takes an optional style according to which the link will be transformed.
+function L.new(text, style)
+    local anchor = a.create()
+    return L.create(anchor, text, style)
+end
+
 return L
