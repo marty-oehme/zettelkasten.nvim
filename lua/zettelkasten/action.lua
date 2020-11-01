@@ -1,11 +1,5 @@
 local A = {}
 
--- Return only the link reference portion of a markdown/wiki style link
-function A.extract_link(input)
-    if not input then return end
-    return input:match("%[%[(.+)|?.*%]%]") or input:match("%[.*%]%((.+)%)")
-end
-
 -- Extracts a file name from a link and opens the corresponding file
 -- in the current buffer.
 -- Takes an optional input parameter
@@ -23,6 +17,12 @@ function A.open_selected()
     A.open(A.get_link_under_cursor())
 end
 
+-- Return only the link reference portion of a markdown/wiki style link
+function A.extract_link(input)
+    if not input then return end
+    return input:match("%[%[(.+)|?.*%]%]") or input:match("%[.*%]%((.+)%)")
+end
+
 -- Returns the word currently under cursor, the vim equivalent of yiW.
 -- Takes an optional boolean flag to set the word being caught
 -- to the vim equivalent of doing yiw, a more exclusive version.
@@ -32,6 +32,7 @@ function A.get_link_under_cursor(small)
     local word = vim.fn.expand(c)
     return word
 end
+
 -- -- Returns the content of the line from the cursor onwards.
 -- function A.get_next_link_on_line()
 --     local line = vim.api.nvim_get_current_line()

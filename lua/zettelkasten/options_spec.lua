@@ -43,4 +43,19 @@ describe("zettel options", function()
         _G.vim.g.zettel_link_style = "idontbelong"
         assert.is_error(function() opt.zettel() end)
     end)
+
+    it("should return the global link following if set in vim", function()
+        _G.vim.g.zettel_link_following = "line"
+        assert.same("line", opt.zettel().link_following)
+    end)
+    it("should return the buffer link following if set in vim", function()
+        _G.vim.b.zettel_link_following = "line"
+        assert.same("line", opt.zettel().link_following)
+    end)
+    it("should return the default link following if not set in vim",
+       function() assert.same("cursor", opt.zettel().link_following) end)
+    it("should error on entries other than markdown/wiki", function()
+        _G.vim.g.zettel_link_following = "idontbelong"
+        assert.is_error(function() opt.zettel() end)
+    end)
 end)
