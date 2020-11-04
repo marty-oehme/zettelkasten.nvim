@@ -27,40 +27,6 @@ describe("append_extension", function()
     end)
 end)
 
-describe("style_markdown", function()
-    it("should correctly apply transformations to link and text", function()
-        assert.same("[My AWESOME Link](1910291645_my-awesome-link.md)",
-                    link.style_markdown("1910291645_my-awesome-link.md",
-                                        "My AWESOME Link"))
-    end)
-    it("should trim whitespace for the text area", function()
-        assert.same("[](1910291645_my-awesome-link.md)",
-                    link.style_markdown("1910291645_my-awesome-link.md", "   "))
-        assert.same("[hi](1910291645_my-awesome-link.md)", link.style_markdown(
-                        "1910291645_my-awesome-link.md", "  hi     "))
-    end)
-    it("should error if no link provided", function()
-        assert.is_error(function() link.style_markdown("", "mytext") end)
-        assert.is_error(function() link.style_markdown(nil, "mytext") end)
-    end)
-end)
-
-describe("style_wiki", function()
-    it("should error if no link provided", function()
-        assert.is_error(function() link.style_wiki("", "mytext") end)
-        assert.is_error(function() link.style_wiki(nil, "mytext") end)
-    end)
-    it("should correctly apply transformations to link and text", function()
-        assert.same("[[1910291645|My AWESOME Link]]",
-                    link.style_wiki("1910291645", "My AWESOME Link"))
-    end)
-    it("should trim whitespace for the text area", function()
-        assert.same("[[1910291645]]", link.style_wiki("1910291645", "   "))
-        assert.same("[[1910291645|hi]]",
-                    link.style_wiki("1910291645", "  hi     "))
-    end)
-end)
-
 describe("create", function()
     before_each(function()
         vim.g.zettel_extension = ".md"
@@ -82,6 +48,46 @@ describe("create", function()
         vim.g.zettel_link_style = "wiki"
         assert.same("[[1910291645]]", link.create("1910291645"))
     end)
+    describe("wiki link styling", function()
+        it("should error if no link provided", function()
+            assert.is_error(function() link.style_wiki("", "mytext") end)
+            assert.is_error(function() link.style_wiki(nil, "mytext") end)
+        end)
+        it("should correctly apply transformations to link and text", function()
+            assert.same("[[1910291645|My AWESOME Link]]",
+                        link.create("1910291645", "My AWESOME Link", "wiki"))
+        end)
+        it("should trim whitespace for the text area", function()
+            assert.same("[[1910291645]]",
+                        link.create("1910291645", "   ", "wiki"))
+            assert.same("[[1910291645|hi]]",
+                        link.create("1910291645", "  hi     ", "wiki"))
+        end)
+        describe("markdown link styling", function()
+            it("should correctly apply transformations to link and text",
+               function()
+                assert.same("[My AWESOME Link](1910291645_my-awesome-link.md)",
+                            link.create("1910291645", "My AWESOME Link",
+                                        "markdown"))
+            end)
+            it("should trim whitespace for the text area", function()
+                assert.same("[](1910291645.md)",
+                            link.create("1910291645", "   ", "markdown"))
+                assert.same("[hi](1910291645_hi.md)",
+                            link.create("1910291645", "  hi     ", "markdown"))
+            end)
+            it("should error if no link provided", function()
+                assert.is_error(function()
+                    link.style_markdown("", "mytext")
+                end)
+                assert.is_error(function()
+                    link.style_markdown(nil, "mytext")
+                end)
+            end)
+        end)
+
+    end)
+
 end)
 
 describe("new", function()

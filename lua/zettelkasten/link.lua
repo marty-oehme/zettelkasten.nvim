@@ -3,6 +3,27 @@ local L = {}
 local o = require 'zettelkasten.options'
 local a = require 'zettelkasten.anchor'
 
+local parsers = {
+    markdown = {
+        ref = "%[.-%]%((.-)%)",
+        text = "%[(.-)%]%(.-%)",
+        style_func = function(link, text, extension)
+            return "[" .. L.trimmed(text) .. "](" .. link .. extension .. ")"
+        end
+    },
+    wiki = {
+        ref = "%[%[(.-)|?.-%]%]",
+        text = "%[%[.-|?(.-)%]%]",
+        style_func = function(link, text)
+            local pipe = ""
+            text = L.trimmed(text)
+
+            if text and text ~= "" then pipe = "|" .. text end
+            return "[[" .. link .. pipe .. "]]"
+        end
+    }
+}
+
 -- Returns the text cleaned up to be more useful in a link.
 -- Spaces are replaced by dashes and everything is lowercased.
 function L.urlify(text)
@@ -22,7 +43,7 @@ end
 
 -- Returns text with surrounding whitespace trimmed. Returns empty string
 -- if only whitespace.
-local function trimmed(text)
+function L.trimmed(text)
     if not text then return end
     return text:match '^()%s*$' and '' or text:match '^%s*(.*%S)'
 end
@@ -32,7 +53,7 @@ end
 function L.style_markdown(link, text)
     must_have(link)
 
-    return "[" .. trimmed(text) .. "](" .. link .. ")"
+    return "[" .. L.trimmed(text) .. "](" .. link .. ")"
 end
 
 -- Returns a wikilink-compatible transformation of the link and text combination
@@ -40,7 +61,7 @@ end
 function L.style_wiki(link, text)
     must_have(link)
     local pipe = ""
-    text = trimmed(text)
+    text = L.trimmed(text)
 
     if text and text ~= "" then pipe = "|" .. text end
     return "[[" .. link .. pipe .. "]]"
@@ -54,11 +75,11 @@ function L.create(anchor, text, style)
     style = style or o.zettel().link_style
 
     if style == "markdown" then
-        local link = (a.prepend(anchor, L.urlify(text)))
-        return L.style_markdown(L.append_extension(link), text)
+        local link = (a.prepend(anchor, L.urlify(L.trimmed(text))))
+        return parsers.markdown.style_func(link, text, o.zettel().extension)
 
     elseif style == "wiki" then
-        return L.style_wiki(anchor, text)
+        return parsers.wiki.style_func(anchor, text)
     end
     error("Link creation failed.")
 end
@@ -71,4 +92,36 @@ function L.new(text, style)
     return L.create(anchor, text, style)
 end
 
-return L
+-- Return all links contained in the input given in an array.
+-- Returned link tables have the following structure:
+-- link = { text=, ref=, startpos=27, endpos=65 }
+function L.extract_all(input)
+    if not input then return end
+    local links = {}
+    local curpos = 1
+    for _, parser in pairs(parsers) do
+        while input:find(parser.ref, curpos) do
+            local ref = input:match(parser.ref, curpos)
+            local text = input:match(parser.text, curpos)
+            local startpos, endpos = input:find(parser.ref, curpos)
+            table.insert(links, {
+                ref = ref,
+                text = text,
+                startpos = startpos,
+                endpos = endpos
+            })
+            curpos = endpos
+        end
+    end
+    return links
+end
+
+return {
+    new = L.new,
+    create = L.create,
+    style_wiki = L.style_wiki,
+    style_markdown = L.style_markdown,
+    append_extension = L.append_extension,
+    urlify = L.urlify,
+    extract_all = L.extract_all
+}
