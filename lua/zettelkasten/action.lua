@@ -2,16 +2,19 @@ local A = {}
 
 local o = require 'zettelkasten.options'
 
-local parsers = {markdown = "%[.-%]%((.-)%)", wiki = "%[%[(.+)|?.-%]%]"}
+local BIGNUMBER = 10000000
 
--- Extracts a file name from a link and opens the corresponding file
--- in the current buffer.
--- Takes an optional input parameter
-function A.open(input)
-    local fname = A.extract_link(input)
-    if not fname then return end
+local parsers = {
+    markdown = {ref = "%[.-%]%((.-)%)", text = "%[(.-)%]%(.-%)"},
+    wiki = {ref = "%[%[(.-)|?.-%]%]", text = "%[%[.-|?(.-)%]%]"}
+}
+
+-- Opens the link passed in in the editor's current buffer.
+-- Requires a link object passed in.
+function A.open(link)
+    if not link or not link.ref then return end
     -- TODO follow: go to anchor, fall back to filename
-    vim.api.nvim_command(string.format("edit %s", fname))
+    vim.api.nvim_command(string.format("edit %s", link.ref))
 end
 
 -- Gets the input at the current buffer cursor and opens it
@@ -27,29 +30,56 @@ function A.open_selected(style)
     end
 end
 
--- Return only the link reference portion of a markdown/wiki style link.
--- For example, for a markdown link [my text](my-link.md)
--- it would only return my-link.md
-function A.extract_link(input)
+-- Return all links contained in the input given in an array.
+-- Returned link tables have the following structure:
+-- link = { text=, ref=, startpos=27, endpos=65 }
+function A.extract_all_links(input)
     if not input then return end
-    for _, parser in pairs(parsers) do return input:match(parser) end
-    return
+    local links = {}
+    local curpos = 1
+    for _, parser in pairs(parsers) do
+        while input:find(parser.ref, curpos) do
+            local ref = input:match(parser.ref, curpos)
+            local text = input:match(parser.text, curpos)
+            local startpos, endpos = input:find(parser.ref, curpos)
+            table.insert(links, {
+                ref = ref,
+                text = text,
+                startpos = startpos,
+                endpos = endpos
+            })
+            curpos = endpos
+        end
+    end
+    return links
 end
 
--- Returns the word currently under cursor, the vim equivalent of yiW.
--- Takes an optional boolean flag to set the word being caught
--- to the vim equivalent of doing yiw, a more exclusive version.
-function A.get_link_under_cursor(small)
-    local c = "<cWORD>"
-    if small then c = "<cword>" end
-    local word = vim.fn.expand(c)
-    return word
+-- Returns the link currently under cursor, roughly the vim equivalent of yiW.
+-- Works for links containing spaces in their text or reference link.
+function A.get_link_under_cursor()
+    local curpos = vim.api.nvim_win_get_cursor(0)[2]
+    local links = A.extract_all_links(vim.api.nvim_get_current_line())
+    for _, link in pairs(links) do
+        if link.startpos <= curpos + 1 and link.endpos > curpos then
+            return link
+        end
+    end
+    return nil
 end
 
--- Returns the content of the line from the cursor onwards.
+-- Returns the next link of the line from the cursor onwards.
 function A.get_next_link_on_line()
-    local line = vim.api.nvim_get_current_line()
-    return line:sub(vim.api.nvim_win_get_cursor(0)[2])
+    local curpos = vim.api.nvim_win_get_cursor(0)[2]
+    local links = A.extract_all_links(vim.api.nvim_get_current_line())
+    local nearestpos = BIGNUMBER
+    local nearestlink
+    for k, link in pairs(links) do
+        if link.endpos > curpos and link.endpos < nearestpos then
+            nearestpos = link.endpos
+            nearestlink = link
+        end
+    end
+    return nearestlink
 end
 
 return {open = A.open, open_selected = A.open_selected}
