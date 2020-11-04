@@ -1,5 +1,7 @@
 local ls = {}
 
+local o = require 'zettelkasten.options'
+
 local function isDirectory(ftype)
     if ftype == 'directory' then return true end
     return false
@@ -12,8 +14,9 @@ function ls.get_anchors_and_paths(path, recursive, options)
     options = options or {}
     -- TODO check for duplicates and warn user
     local zettel = {}
+    -- TODO let user set as option, at least remove magic var
     local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*%' ..
-                          (options.zettel_extension or '.md') .. '$'
+                          o.zettel().extension .. '$'
 
     local handle = vim.loop.fs_scandir(path)
     while handle do
@@ -35,11 +38,10 @@ end
 -- Take a list of zettel as an optional variable, without which
 -- it will use the (recursive) results of the zettel_root directory.
 function ls.get_zettel(anchor, all)
-    if not all then all = ls.get_anchors_and_paths('somepath') end
+    -- TODO why is there 'somepath' here?
+    if not all then all = ls.get_anchors_and_paths('/home/marty/documents/notes') end
 
     return all[anchor]
 end
-
-function ls.open_zettel(anchor, all) end
 
 return ls

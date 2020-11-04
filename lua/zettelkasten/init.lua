@@ -2,7 +2,8 @@ local ZK = {}
 
 local ls = require 'zettelkasten.list'
 local o = require 'zettelkasten.options'
-local a = require 'zettelkasten.anchor'
+local anchor = require 'zettelkasten.anchor'
+local action = require 'zettelkasten.action'
 
 -- Returns all zettel in path as a
 -- { "anchor" = "path/to/zettel/anchor filename.md" }
@@ -14,6 +15,13 @@ end
 
 -- Return a valid zettelkasten anchor for the current time,
 -- composed of yymmddHHMM.
-function ZK.create_anchor() return a.create() end
+function ZK.get_anchor() return anchor.create() end
 
-return {get_zettel_list = ZK.get_zettel_list, create_anchor = ZK.create_anchor}
+-- Open link under cursor, or next on line
+function ZK.open_link() return action.open_selected() end
+
+return {
+    get_zettel_list = ZK.get_zettel_list,
+    get_anchor = ZK.get_anchor,
+    open_link = ZK.open_link
+}

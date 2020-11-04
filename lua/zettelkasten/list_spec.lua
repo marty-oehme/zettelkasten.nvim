@@ -159,8 +159,3 @@ describe("get_zettel", function()
         assert.same("1910291645 myfile.wiki", ls.get_zettel("1910291645"))
     end)
 end)
-
-describe("open_zettel", function()
-    it("should set the current buffer to the zettel passed in as anchor",
-       function() pending("not implemented") end)
-end)

@@ -5,9 +5,13 @@ To develop / debug:
 start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
 
 next up:
-* [x] link following option (under cursor, next on line)
-* [x] next link on line function (actions)
-* [x] helper function to decide which one to use from A.open
+[ ] fix link following:
+  * [x] empty space (e.g. in link text, or link itself) disrupts link regex search
+  * [x] line-end following breaks if cursor is in the MIDDLE of the link
+  * [ ] extract anchor from link/string (anchor.lua)
+  * [ ] opening zettel should use generated link table for full filename anchor search
+    * [ ] probably stop hardcoding anchor regex, make an option
+  * [ ] implement fallback to filename
 
 ## TODO: needed functionality
 
@@ -40,6 +44,7 @@ next up:
 ## TODO: nice-to-haves
 
 * [ ] refactor parsers (md/wiki) to be tables of functions/regex in options, so e.g. valid link detection can call `options.parser.isValidLink(link)` or transformation `options.parser.styleLink(anchor, text)`
+  * [ ] use unified parser model (e.g. containing `turn-to-link()`, `parse-link()`) function
   * [ ] enable custom parser supply
 * [ ] completion engine (e.g. for `completion-nvim`, look in completion_buffers/completion-tags for reference)
 * [ ] zettel caching for big directories
@@ -52,6 +57,10 @@ next up:
   * [ ] recognize duplicate anchors (in directory, when listing, etc)
     * [ ] provide option to rename and automatically change backlinks
 * [ ] zettel 'lens' (preview first headline + content of linked zettel through floating window etc, on keypress)
+
+## TODO: maintenance
+
+* [ ] remove hard-coding of option vimnames in tests, now that we can dynamically change this through a single table
 
 * anchor creation
   * *must* be unique

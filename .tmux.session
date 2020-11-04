@@ -7,7 +7,7 @@ select-pane -t 1
 split-window -v watch -t -n 1 -c '[ $(git diff --staged | wc -l) -eq 0 ] && git -c color.ui=always log --graph --date=short --decorate --oneline --all --remotes || git -c color.ui=always diff --staged | tail -n $(($LINES - 2))'
 select-pane -t 4
 new-window -n code
-send-keys "v ." C-m I
+send-keys "nvim --cmd "set rtp+=$(pwd)" ." C-m I
 split-window -v -l 10%
 send-keys "find . -type f -name '*.lua' | entr -c busted51 --exclude-tags='skip' --suppress-pending -C lua ." C-m
 split-window -h
