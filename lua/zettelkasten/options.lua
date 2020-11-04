@@ -1,16 +1,26 @@
 local Opt = {}
 
--- setting defaults
-local ZETTEL_EXTENSION      = ".md"        -- ending of zettel files
-local ZETTEL_LINK_STYLE     = "markdown"   -- "wiki", sets the style of link to use
-local ZETTEL_LINK_FOLLOWING = "cursor"     -- "line", sets the distance ahead to look for zettel links
-local ANCHOR_SEPARATOR      = "_"          -- separtor between anchor and link text in md links
+-- vim setting names and defaults
+local zettel_defaults = {
+    extension = {vimname = "zettel_extension", default = ".md"},
+    link_style = {
+        vimname = "zettel_link_style",
+        default = "markdown",
+        valid = {markdown = true, wiki = true}
+    },
+    link_following = {
+        vimname = "zettel_link_following",
+        default = "cursor",
+        valid = {cursor = true, line = true}
+    }
+}
+local anchor_defaults = {
+    separator = {vimname = "zettel_anchor_separator", default = "_"}
+}
+
+-- remaining options
 -- TODO zettel_root = vim.g["zettel_root"] or vim.b["zettel_root"] or "~/documents/notes",
 -- TODO zettel_anchor_pattern = regex? -> needs custom creation function in `create_anchor`
-
--- constricted option sets
-local ZETTEL_LINK_STYLE_OPTIONS = {markdown = true, wiki = true}
-local ZETTEL_LINK_FOLLOWING_OPTIONS = { cursor = true, line = true }
 
 local function must_contain(set, value, name)
     if type(set) ~= "table" then return false end
@@ -22,28 +32,25 @@ local function must_contain(set, value, name)
     end
 end
 
-function Opt.zettel()
+local function get_options(defaults)
     local options = {}
-    options.extension =
-        vim.g["zettel_extension"] or vim.b["zettel_extension"] or
-            ZETTEL_EXTENSION
+    local def = defaults
+    for opt, v in pairs(def) do
 
-    options.link_style = vim.g["zettel_link_style"] or
-                             vim.b["zettel_link_style"] or ZETTEL_LINK_STYLE
-    must_contain(ZETTEL_LINK_STYLE_OPTIONS, options.link_style,
-                 "zettel_link_style")
+        -- check for vim options set (globally or buffer), otherwise use default value
+        options[opt] = vim.g[def[opt].vimname] or vim.b[def[opt].vimname] or
+                           def[opt].default
 
-    options.link_following = vim.g["zettel_link_following"] or vim.b["zettel_link_following"] or ZETTEL_LINK_FOLLOWING
-    must_contain(ZETTEL_LINK_FOLLOWING_OPTIONS, options.link_following, "zettel_link_following")
-
+        -- check correct option set for constrained value sets
+        if def[opt].valid then
+            must_contain(def[opt].valid, options[opt], def[opt].name)
+        end
+    end
     return options
 end
 
-function Opt.anchor()
-    local options = {}
-    options.separator = vim.g["zettel_anchor_separator"] or
-                            vim.b["zettel_anchor_separator"] or ANCHOR_SEPARATOR
-    return options
-end
+function Opt.zettel() return get_options(zettel_defaults) end
+
+function Opt.anchor() return get_options(anchor_defaults) end
 
 return Opt
