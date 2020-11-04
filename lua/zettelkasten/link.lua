@@ -7,19 +7,20 @@ local parsers = {
     markdown = {
         ref = "%[.-%]%((.-)%)",
         text = "%[(.-)%]%(.-%)",
-        style_func = function(link, text, extension)
+        style_func = function(anchor, text, extension)
+            local link = (a.prepend(anchor, L.urlify(L.trimmed(text))))
             return "[" .. L.trimmed(text) .. "](" .. link .. extension .. ")"
         end
     },
     wiki = {
         ref = "%[%[(.-)|?.-%]%]",
         text = "%[%[.-|?(.-)%]%]",
-        style_func = function(link, text)
-            local pipe = ""
+        style_func = function(anchor, text)
+            local pipetxt = ""
             text = L.trimmed(text)
 
-            if text and text ~= "" then pipe = "|" .. text end
-            return "[[" .. link .. pipe .. "]]"
+            if text and text ~= "" then pipetxt = "|" .. text end
+            return "[[" .. anchor .. pipetxt .. "]]"
         end
     }
 }
@@ -35,36 +36,11 @@ end
 -- at the end.
 function L.append_extension(text) return text .. o.zettel().extension end
 
-local function must_have(content)
-    if not content or content == "" then
-        error("Link is not allowed to be empty.")
-    end
-end
-
 -- Returns text with surrounding whitespace trimmed. Returns empty string
 -- if only whitespace.
 function L.trimmed(text)
     if not text then return end
     return text:match '^()%s*$' and '' or text:match '^%s*(.*%S)'
-end
-
--- Returns a markdown-compatible transformation of the link and text combination
--- passed in.
-function L.style_markdown(link, text)
-    must_have(link)
-
-    return "[" .. L.trimmed(text) .. "](" .. link .. ")"
-end
-
--- Returns a wikilink-compatible transformation of the link and text combination
--- passed in, adding the text as a pipe if it exists.
-function L.style_wiki(link, text)
-    must_have(link)
-    local pipe = ""
-    text = L.trimmed(text)
-
-    if text and text ~= "" then pipe = "|" .. text end
-    return "[[" .. link .. pipe .. "]]"
 end
 
 -- Returns a correctly formatted link to a zettel.
@@ -74,14 +50,7 @@ end
 function L.create(anchor, text, style)
     style = style or o.zettel().link_style
 
-    if style == "markdown" then
-        local link = (a.prepend(anchor, L.urlify(L.trimmed(text))))
-        return parsers.markdown.style_func(link, text, o.zettel().extension)
-
-    elseif style == "wiki" then
-        return parsers.wiki.style_func(anchor, text)
-    end
-    error("Link creation failed.")
+    return parsers[style].style_func(anchor, text, o.zettel().extension)
 end
 
 -- Returns a correctly formatted link to a new zettel (without anchor).
