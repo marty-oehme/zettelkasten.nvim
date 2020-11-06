@@ -77,7 +77,8 @@ function L.extract_all(input)
                 ref = ref,
                 text = text,
                 startpos = startpos,
-                endpos = endpos
+                endpos = endpos,
+                anchor = a.extract(ref)
             })
             curpos = endpos
         end
@@ -88,8 +89,6 @@ end
 return {
     new = L.new,
     create = L.create,
-    style_wiki = L.style_wiki,
-    style_markdown = L.style_markdown,
     append_extension = L.append_extension,
     urlify = L.urlify,
     extract_all = L.extract_all

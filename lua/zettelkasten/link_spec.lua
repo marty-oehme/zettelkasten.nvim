@@ -91,3 +91,26 @@ describe("new", function()
         assert.is_not_nil(result:match("%[%[[^|]+%]%]"))
     end)
 end)
+
+describe("extract_all", function()
+    it("should get all links input string", function()
+        local input = "[Some text](2003042042_my-link.md) and another, [with more text](2001261123 another-link.md), and done. "
+        local expected = {
+            {
+                endpos = 34,
+                ref = "2003042042_my-link.md",
+                startpos = 1,
+                text = "Some text",
+                anchor = "2003042042"
+            }, {
+                endpos = 92,
+                ref = "2001261123 another-link.md",
+                startpos = 49,
+                text = "with more text",
+                anchor = "2001261123"
+            }
+        }
+
+        assert.same(expected, link.extract_all(input))
+    end)
+end)
