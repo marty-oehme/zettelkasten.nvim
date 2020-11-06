@@ -15,7 +15,7 @@ function ls.get_anchors_and_paths(path, recursive, options)
     -- TODO check for duplicates and warn user
     local zettel = {}
     -- TODO let user set as option, at least remove magic var
-    local anchorreg = '^.*/?([%d][%d][%d][%d][%d][%d][%d][%d][%d][%d])[^/]*%' ..
+    local anchorreg = '^.*/?(' .. o.anchor().regex .. ')[^/]*%' ..
                           o.zettel().extension .. '$'
 
     local handle = vim.loop.fs_scandir(path)
@@ -39,7 +39,9 @@ end
 -- it will use the (recursive) results of the zettel_root directory.
 function ls.get_zettel(anchor, all)
     -- TODO why is there 'somepath' here?
-    if not all then all = ls.get_anchors_and_paths('/home/marty/documents/notes') end
+    if not all then
+        all = ls.get_anchors_and_paths('/home/marty/documents/notes')
+    end
 
     return all[anchor]
 end

@@ -15,19 +15,6 @@ describe("zettel options", function()
     end)
     it("should return the default zettel extension if not set in vim",
        function() assert.same(".md", opt.zettel().extension) end)
-end)
-
-describe("zettel options", function()
-    it("should return the global anchor separator if set in vim", function()
-        _G.vim.g.zettel_anchor_separator = "SEPARATE"
-        assert.same("SEPARATE", opt.anchor().separator)
-    end)
-    it("should return the buffer anchor separator if set in vim", function()
-        _G.vim.b.zettel_anchor_separator = "--"
-        assert.same("--", opt.anchor().separator)
-    end)
-    it("should return the default anchor separator if not set in vim",
-       function() assert.same("_", opt.anchor().separator) end)
 
     it("should return the global link style if set in vim", function()
         _G.vim.g.zettel_link_style = "wiki"
@@ -58,4 +45,30 @@ describe("zettel options", function()
         _G.vim.g.zettel_link_following = "idontbelong"
         assert.is_error(function() opt.zettel() end)
     end)
+end)
+
+describe("anchor options", function()
+    it("should return the global anchor separator if set in vim", function()
+        _G.vim.g.zettel_anchor_separator = "SEPARATE"
+        assert.same("SEPARATE", opt.anchor().separator)
+    end)
+    it("should return the buffer anchor separator if set in vim", function()
+        _G.vim.b.zettel_anchor_separator = "--"
+        assert.same("--", opt.anchor().separator)
+    end)
+    it("should return the default anchor separator if not set in vim",
+       function() assert.same("_", opt.anchor().separator) end)
+
+    it("should return the anchor regex if set in vim", function()
+        vim.g.zettel_anchor_regex =
+            "[%d][%d][%d][%d][%d][%d][%d][%d][%d][%d][%d]?[%d]?"
+        -- allowing both 10- and 12-digit time-based zettel ids
+        assert.same('[%d][%d][%d][%d][%d][%d][%d][%d][%d][%d][%d]?[%d]?',
+                    opt.anchor().regex)
+    end)
+    it("should return the default anchor regex if not set in vim", function()
+        assert.same('[%d][%d][%d][%d][%d][%d][%d][%d][%d][%d]',
+                    opt.anchor().regex)
+    end)
+
 end)

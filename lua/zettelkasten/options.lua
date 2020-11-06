@@ -15,7 +15,11 @@ local zettel_defaults = {
     }
 }
 local anchor_defaults = {
-    separator = {vimname = "zettel_anchor_separator", default = "_"}
+    separator = {vimname = "zettel_anchor_separator", default = "_"},
+    regex = {
+        vimname = "zettel_anchor_regex",
+        default = '[%d][%d][%d][%d][%d][%d][%d][%d][%d][%d]'
+    }
 }
 
 -- remaining options
