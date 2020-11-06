@@ -15,6 +15,13 @@ describe("zettel options", function()
     end)
     it("should return the default zettel extension if not set in vim",
        function() assert.same(".md", opt.zettel().extension) end)
+
+    it("should return the zettel root dir if set in vim", function()
+        _G.vim.g.zettel_rootdir = "~/my/own/dir"
+        assert.same("~/my/own/dir", opt.zettel().rootdir)
+    end)
+    it("should return the default root directory if not set in vim",
+       function() assert.same("~/documents/notes", opt.zettel().rootdir) end)
 end)
 
 describe("link options", function()

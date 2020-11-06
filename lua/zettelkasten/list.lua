@@ -36,10 +36,8 @@ end
 -- Take a list of zettel as an optional variable, without which
 -- it will use the (recursive) results of the zettel_root directory.
 function ls.get_zettel(anchor, all)
-    -- TODO why is there 'somepath' here?
-    if not all then
-        all = ls.get_anchors_and_paths('/home/marty/documents/notes')
-    end
+    all = all or ls.get_anchors_and_paths(o.zettel().rootdir, true)
+    if not all then return end
 
     return all[anchor]
 end

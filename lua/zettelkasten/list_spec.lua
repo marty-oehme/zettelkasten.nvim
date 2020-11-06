@@ -150,12 +150,15 @@ describe("get_zettel", function()
         assert.same("1910291645 myfile.md",
                     ls.get_zettel("1910291645", file_list))
     end)
-
+    it("should return nil and not break on no all list passed in", function()
+        stub(ls, "get_anchors_and_paths")
+        assert.is_not_error(function() ls.get_zettel("myanchor") end)
+    end)
     it("should default to the zettel root dir if no list passed in", function()
-        local file_list = {"1910291645 myfile.wiki", "2345678901 another.wiki"}
-        _G.vim = simple_api_mock(file_list)
+        local fc = stub(ls, "get_anchors_and_paths")
+        local expected = require'zettelkasten.options'.zettel().rootdir
 
-        pending("not implemented")
-        assert.same("1910291645 myfile.wiki", ls.get_zettel("1910291645"))
+        ls.get_zettel(expected)
+        assert.stub(fc).was_called_with(expected, true)
     end)
 end)

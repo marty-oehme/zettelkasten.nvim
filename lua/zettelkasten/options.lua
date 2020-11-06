@@ -2,7 +2,8 @@ local Opt = {}
 
 -- vim setting names and defaults
 local zettel_defaults = {
-    extension = {vimname = "zettel_extension", default = ".md"}
+    extension = {vimname = "zettel_extension", default = ".md"},
+    rootdir = {vimname = "zettel_rootdir", default = "~/documents/notes"}
 }
 local link_defaults = {
     style = {
