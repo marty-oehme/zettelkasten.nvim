@@ -26,4 +26,15 @@ function A.prepend(anchor, text)
     return text
 end
 
+-- Returns anchor contents if an anchor is contained in the input string.
+-- It takes an optional regex parameter with which the plugin option
+-- of which anchor to look for can be overwritten.
+--
+-- If multiple anchors are contained, returns the contents of the first
+-- one encountered.
+function A.extract(input, regex)
+    regex = regex or o.anchor().regex
+    return input:match(regex)
+end
+
 return A

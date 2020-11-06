@@ -8,9 +8,10 @@ next up:
 [ ] fix link following:
   * [x] empty space (e.g. in link text, or link itself) disrupts link regex search
   * [x] line-end following breaks if cursor is in the MIDDLE of the link
-  * [ ] extract anchor from link/string (anchor.lua)
+  * [x] extract anchor from link/string (anchor.lua)
+    * [x] probably stop hardcoding anchor regex, make an option
+    * [ ] implement custom anchor creation function to go with custom regex
   * [ ] opening zettel should use generated link table for full filename anchor search
-    * [ ] probably stop hardcoding anchor regex, make an option
   * [ ] implement fallback to filename
 
 ## TODO: needed functionality

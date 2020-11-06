@@ -39,3 +39,25 @@ describe("prepend", function()
         assert.same("1910291645---arated", A.prepend("1910291645", "arated"))
     end)
 end)
+
+describe("extract", function()
+    it("should get the default anchor from a string of text", function()
+        assert.same("2010261208", A.extract(
+                        "/home/office/docs/2010261208 we are the champions.md"))
+    end)
+    it("should return nil when default anchor not contained", function()
+        assert.same(nil, A.extract(
+                        "/home/office/docs/10261208 we are the champions.md"))
+    end)
+    it("should use the anchor set in options", function()
+        vim.g.zettel_anchor_regex = '[%u][%l][%d][%d][%d][%d]'
+        assert.same("Fa1984", A.extract(
+                        "/home/office/docs/Fa1984_we are the champions.md"))
+    end)
+    it("should use the anchor regex argument if one is passed", function()
+        assert.same("bO133T",
+                    A.extract(
+                        "/home/office/docs/bO133T-we are the champions.md",
+                        "[%l][%u][%d][%d][%d][%u]"))
+    end)
+end)
