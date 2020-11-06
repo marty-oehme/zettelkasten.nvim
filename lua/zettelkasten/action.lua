@@ -19,18 +19,20 @@ end
 -- superseding the one set in options.
 function A.open_selected(style)
     local style = style or o.link().following
+
+    local curpos = vim.api.nvim_win_get_cursor(0)[2]
+    local links = link.extract_all(vim.api.nvim_get_current_line())
+
     if style == 'line' then
-        A.open(A.get_next_link_on_line())
+        A.open(A.get_next_link_on_line(links, curpos))
     elseif style == 'cursor' then
-        A.open(A.get_link_under_cursor())
+        A.open(A.get_link_under_cursor(links, curpos))
     end
 end
 
 -- Returns the link currently under cursor, roughly the vim equivalent of yiW.
 -- Works for links containing spaces in their text or reference link.
-function A.get_link_under_cursor()
-    local curpos = vim.api.nvim_win_get_cursor(0)[2]
-    local links = link.extract_all(vim.api.nvim_get_current_line())
+function A.get_link_under_cursor(links, curpos)
     for _, link in pairs(links) do
         if link.startpos <= curpos + 1 and link.endpos > curpos then
             return link
@@ -40,9 +42,7 @@ function A.get_link_under_cursor()
 end
 
 -- Returns the next link of the current line from the cursor onwards.
-function A.get_next_link_on_line()
-    local curpos = vim.api.nvim_win_get_cursor(0)[2]
-    local links = link.extract_all(vim.api.nvim_get_current_line())
+function A.get_next_link_on_line(links, curpos)
     local nearestpos = BIGNUMBER
     local nearestlink
     for k, link in pairs(links) do
