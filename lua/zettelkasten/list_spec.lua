@@ -27,7 +27,9 @@ describe("get_anchors_and_paths", function()
         local file_list = {"1910291645 this-is-a-testfile.md"}
         _G.vim = get_api_mock(file_list)
 
-        local expected = {["1910291645"] = "1910291645 this-is-a-testfile.md"}
+        local expected = {
+            ["1910291645"] = "someDir/1910291645 this-is-a-testfile.md"
+        }
         assert.same(expected, ls.get_anchors_and_paths("someDir"))
     end)
 
@@ -40,8 +42,8 @@ describe("get_anchors_and_paths", function()
         _G.vim = get_api_mock(file_list)
 
         local expected = {
-            ["1910291645"] = "1910291645 this-is-a-testfile.md",
-            ["2010261208"] = "2010261208 this-should-be-picked-up.md"
+            ["1910291645"] = "someDir/1910291645 this-is-a-testfile.md",
+            ["2010261208"] = "someDir/2010261208 this-should-be-picked-up.md"
         }
         assert.same(expected, ls.get_anchors_and_paths("someDir"))
     end)
@@ -112,10 +114,10 @@ describe("get_anchors_and_paths", function()
         }
         _G.vim = vim_api_mock
         local expected = {
-            ["1234567890"] = "1234567890 myfile.md",
-            ["2345678901"] = "2345678901 another.md",
-            ["2222222222"] = "2222222222 should-be-present.md",
-            ["3333333333"] = "3333333333 should-also-be-present.md"
+            ["1234567890"] = "mydirectory/1234567890 myfile.md",
+            ["2345678901"] = "mydirectory/2345678901 another.md",
+            ["2222222222"] = "mydirectory/subdir/2222222222 should-be-present.md",
+            ["3333333333"] = "mydirectory/subdir/3333333333 should-also-be-present.md"
         }
         assert.same(expected, ls.get_anchors_and_paths('mydirectory', true))
     end)
@@ -126,8 +128,8 @@ describe("get_anchors_and_paths", function()
         vim.g['zettel_extension'] = '.wiki'
 
         local expected = {
-            ["1910291645"] = "1910291645 myfile.wiki",
-            ["2345678901"] = "2345678901 another.wiki"
+            ["1910291645"] = "mydirectory/1910291645 myfile.wiki",
+            ["2345678901"] = "mydirectory/2345678901 another.wiki"
         }
 
         assert.same(expected,

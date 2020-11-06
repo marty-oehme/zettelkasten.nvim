@@ -7,6 +7,11 @@ local function isDirectory(ftype)
     return false
 end
 
+local function cleanPath(path)
+    if path:match("^~") then path = os.getenv("HOME") .. path:sub(2) end
+    return path
+end
+
 -- TODO transform paths:
 --    * to absolute value (e.g. ~ to home, scandir needs absolute)
 --    * to ensure / at the end (or no /) gets taken into account
@@ -15,6 +20,8 @@ function ls.get_anchors_and_paths(path, recursive)
     local zettel = {}
     local anchorreg = '^.*/?(' .. o.anchor().regex .. ')[^/]*%' ..
                           o.zettel().extension .. '$'
+
+    path = cleanPath(path)
 
     local handle = vim.loop.fs_scandir(path)
     while handle do
@@ -27,7 +34,7 @@ function ls.get_anchors_and_paths(path, recursive)
         end
 
         local anchor = string.match(name, anchorreg)
-        if anchor then zettel[tostring(anchor)] = name end
+        if anchor then zettel[tostring(anchor)] = path .. "/" .. name end
     end
     return zettel
 end

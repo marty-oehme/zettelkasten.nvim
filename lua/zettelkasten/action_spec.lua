@@ -1,6 +1,8 @@
 action = require 'zettelkasten.action'
 
-before_each(function() _G.vim = {g = {}, b = {}} end)
+before_each(function()
+    _G.vim = {g = {}, b = {}, loop = {fs_scandir = function() end}}
+end)
 after_each(function() _G.vim = nil end)
 
 describe("open", function()
@@ -14,6 +16,16 @@ describe("open", function()
     it("should do nothing when no link passed in", function()
         vim.fn = {expand = function() end}
         assert.is_not_error(action.open)
+    end)
+    it("should use the anchor to open the corresponding zettel", function()
+        vim.api = {nvim_command = mock(function() end)}
+        ls = stub(require 'zettelkasten.list', "get_zettel")
+
+        action.open({
+            ref = "1910271456_link-to-my-file.md",
+            anchor = "1910271456"
+        })
+        assert.stub(ls).was_called_with("1910271456")
     end)
 end)
 

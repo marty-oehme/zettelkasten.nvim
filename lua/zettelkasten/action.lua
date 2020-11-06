@@ -2,6 +2,7 @@ local A = {}
 
 local o = require 'zettelkasten.options'
 local link = require 'zettelkasten.link'
+local list = require 'zettelkasten.list'
 
 local BIGNUMBER = 10000000
 
@@ -9,8 +10,8 @@ local BIGNUMBER = 10000000
 -- Requires a link object passed in.
 function A.open(link)
     if not link or not link.ref then return end
-    -- TODO follow: go to anchor, fall back to filename
-    vim.api.nvim_command(string.format("edit %s", link.ref))
+    local fname = list.get_zettel(link.anchor) or link.ref
+    vim.api.nvim_command(string.format("edit %s", fname))
 end
 
 -- Gets the input at the current buffer cursor and opens it

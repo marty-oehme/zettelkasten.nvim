@@ -94,7 +94,8 @@ end)
 
 describe("extract_all", function()
     it("should get all links input string", function()
-        local input = "[Some text](2003042042_my-link.md) and another, [with more text](2001261123 another-link.md), and done. "
+        local input =
+            "[Some text](2003042042_my-link.md) and another, [with more text](2001261123 another-link.md), and done. "
         local expected = {
             {
                 endpos = 34,
