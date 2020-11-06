@@ -15,35 +15,37 @@ describe("zettel options", function()
     end)
     it("should return the default zettel extension if not set in vim",
        function() assert.same(".md", opt.zettel().extension) end)
+end)
 
+describe("link options", function()
     it("should return the global link style if set in vim", function()
         _G.vim.g.zettel_link_style = "wiki"
-        assert.same("wiki", opt.zettel().link_style)
+        assert.same("wiki", opt.link().style)
     end)
     it("should return the buffer link style if set in vim", function()
         _G.vim.b.zettel_link_style = "wiki"
-        assert.same("wiki", opt.zettel().link_style)
+        assert.same("wiki", opt.link().style)
     end)
     it("should return the default link style if not set in vim",
-       function() assert.same("markdown", opt.zettel().link_style) end)
+       function() assert.same("markdown", opt.link().style) end)
     it("should error on entries other than markdown/wiki", function()
         _G.vim.g.zettel_link_style = "idontbelong"
-        assert.is_error(function() opt.zettel() end)
+        assert.is_error(function() opt.link() end)
     end)
 
     it("should return the global link following if set in vim", function()
         _G.vim.g.zettel_link_following = "line"
-        assert.same("line", opt.zettel().link_following)
+        assert.same("line", opt.link().following)
     end)
     it("should return the buffer link following if set in vim", function()
         _G.vim.b.zettel_link_following = "line"
-        assert.same("line", opt.zettel().link_following)
+        assert.same("line", opt.link().following)
     end)
     it("should return the default link following if not set in vim",
-       function() assert.same("cursor", opt.zettel().link_following) end)
+       function() assert.same("cursor", opt.link().following) end)
     it("should error on entries other than markdown/wiki", function()
         _G.vim.g.zettel_link_following = "idontbelong"
-        assert.is_error(function() opt.zettel() end)
+        assert.is_error(function() opt.link() end)
     end)
 end)
 

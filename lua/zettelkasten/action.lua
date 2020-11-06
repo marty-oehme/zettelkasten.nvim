@@ -18,7 +18,7 @@ end
 -- Takes an optional style of link following to use,
 -- superseding the one set in options.
 function A.open_selected(style)
-    local style = style or o.zettel().link_following
+    local style = style or o.link().following
     if style == 'line' then
         A.open(A.get_next_link_on_line())
     elseif style == 'cursor' then
@@ -55,3 +55,39 @@ function A.get_next_link_on_line()
 end
 
 return {open = A.open, open_selected = A.open_selected}
+
+--- local function get_selection()
+---     s_start = vim.fn.line("'<") - 1
+---     s_end = vim.fn.line("'>")
+---     return vim.api.nvim_buf_get_lines(0, s_start, s_end, true)
+--- end
+--
+--- -- UGLY HACKS ABOUND
+--- function ZK.create_zettel()
+---     -- get line and its number
+---     local selection
+---     local line = vim.api.nvim_get_current_line()
+---     local linenr = vim.api.nvim_win_get_cursor(0)[1]
+--
+---     -- get words under cursor / selected
+---     local mode = vim.api.nvim_get_mode()['mode']
+---     if mode == "n" then
+---         print(vim.fn.line("'<'") - 1)
+---         selection = vim.fn.expand("<cWORD>")
+---         -- NOT WORKING YET
+---     elseif mode == "v" then
+---         selection = get_selection()
+---     else
+---         return
+---     end
+--
+---     -- get valid link
+---     local link = l.create(nil, selection)
+--
+---     -- create new line with selection replaced in middle
+---     local st, en = line:find(selection, 0, true)
+---     local repl_line = line:sub(1, st - 1) .. link .. line:sub(en + 1)
+--
+---     -- replace existing line in favor of new one
+---     vim.api.nvim_buf_set_lines(0, linenr - 1, linenr, true, {repl_line})
+--- end

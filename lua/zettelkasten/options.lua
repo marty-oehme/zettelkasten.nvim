@@ -2,13 +2,15 @@ local Opt = {}
 
 -- vim setting names and defaults
 local zettel_defaults = {
-    extension = {vimname = "zettel_extension", default = ".md"},
-    link_style = {
+    extension = {vimname = "zettel_extension", default = ".md"}
+}
+local link_defaults = {
+    style = {
         vimname = "zettel_link_style",
         default = "markdown",
         valid = {markdown = true, wiki = true}
     },
-    link_following = {
+    following = {
         vimname = "zettel_link_following",
         default = "cursor",
         valid = {cursor = true, line = true}
@@ -54,7 +56,7 @@ local function get_options(defaults)
 end
 
 function Opt.zettel() return get_options(zettel_defaults) end
-
+function Opt.link() return get_options(link_defaults) end
 function Opt.anchor() return get_options(anchor_defaults) end
 
 return Opt

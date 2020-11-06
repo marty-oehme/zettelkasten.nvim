@@ -12,6 +12,7 @@ next up:
     * [x] probably stop hardcoding anchor regex, make an option
     * [ ] implement custom anchor creation function to go with custom regex
   * [ ] opening zettel should use generated link table for full filename anchor search
+    * [ ] need a default zettel directory to look in
   * [ ] implement fallback to filename
 
 ## TODO: needed functionality

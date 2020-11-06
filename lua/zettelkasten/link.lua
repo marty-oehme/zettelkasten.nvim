@@ -48,7 +48,7 @@ end
 -- Takes an optional link text which will be added to the link.
 -- Takes an optional style according to which the link will be transformed.
 function L.create(anchor, text, style)
-    style = style or o.zettel().link_style
+    style = style or o.link().style
 
     return parsers[style].style_func(anchor, text, o.zettel().extension)
 end
