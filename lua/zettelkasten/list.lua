@@ -10,11 +10,9 @@ end
 -- TODO transform paths:
 --    * to absolute value (e.g. ~ to home, scandir needs absolute)
 --    * to ensure / at the end (or no /) gets taken into account
-function ls.get_anchors_and_paths(path, recursive, options)
-    options = options or {}
+function ls.get_anchors_and_paths(path, recursive)
     -- TODO check for duplicates and warn user
     local zettel = {}
-    -- TODO let user set as option, at least remove magic var
     local anchorreg = '^.*/?(' .. o.anchor().regex .. ')[^/]*%' ..
                           o.zettel().extension .. '$'
 
