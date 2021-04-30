@@ -63,6 +63,8 @@ next up:
   * [ ] recognize duplicate anchors (in directory, when listing, etc)
     * [ ] provide option to rename and automatically change backlinks
 * [ ] zettel 'lens' (preview first headline + content of linked zettel through floating window etc, on keypress)
+* [ ] support *both* md-style and wiki-style links at the same time
+* [ ] file/directory exception list for gathering files, which will be ignored
 
 ## TODO: maintenance
 

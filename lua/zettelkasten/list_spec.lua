@@ -24,20 +24,24 @@ describe("get_anchors_and_paths", function()
 
     it("should return anchor-keyed table pointing to filename of zettel",
        function()
-        local file_list = {"1910291645 this-is-a-testfile.md"}
+        local file_list = {}
+        file_list["someDir/1910291645 this-is-a-testfile.md"] =
+            "1910291645 this-is-a-testfile.md"
         _G.vim = get_api_mock(file_list)
 
         local expected = {
             ["1910291645"] = "someDir/1910291645 this-is-a-testfile.md"
         }
-        assert.same(expected, ls.get_anchors_and_paths("someDir"))
+        assert.same(expected, ls.get_anchors_and_paths(file_list))
     end)
 
     it("should ignore any malformed files", function()
         local file_list = {
-            "2010261208 this-should-be-picked-up.md",
-            "1910291645 this-is-a-testfile.md", "this-is-not-a-testfile.md",
-            "1910271456 this-is-wrong-extension.txt", "1812 this-is-ignored.md"
+            ["someDir/2010261208 this-should-be-picked-up.md"] = "2010261208 this-should-be-picked-up.md",
+            ["someDir/1910291645 this-is-a-testfile.md"] = "1910291645 this-is-a-testfile.md",
+            ["someDir/this-is-not-a-testfile.md"] = "this-is-not-a-testfile.md",
+            ["1910271456 this-is-wrong-extension.txt"] = "1910271456 this-is-wrong-extension.txt",
+            ["1812 this-is-ignored.md"] = "1812 this-is-ignored.md"
         }
         _G.vim = get_api_mock(file_list)
 
@@ -45,9 +49,28 @@ describe("get_anchors_and_paths", function()
             ["1910291645"] = "someDir/1910291645 this-is-a-testfile.md",
             ["2010261208"] = "someDir/2010261208 this-should-be-picked-up.md"
         }
-        assert.same(expected, ls.get_anchors_and_paths("someDir"))
+        assert.same(expected, ls.get_anchors_and_paths(file_list))
     end)
 
+    it("should adhere to the zettel extension defined in options", function()
+        local file_list = {
+            ["mydirectory/1910291645 myfile.wiki"] = "1910291645 myfile.wiki",
+            ["mydirectory/2345678901 another.wiki"] = "2345678901 another.wiki"
+        }
+        _G.vim = get_api_mock(file_list)
+        vim.g['zettel_extension'] = '.wiki'
+
+        local expected = {
+            ["1910291645"] = "mydirectory/1910291645 myfile.wiki",
+            ["2345678901"] = "mydirectory/2345678901 another.wiki"
+        }
+
+        assert.same(expected, ls.get_anchors_and_paths(file_list, false, vim.g))
+
+    end)
+end)
+
+describe("get_all_files", function()
     it("should recurse into directories if recursive argument passed in ",
        function()
         local files = {
@@ -75,15 +98,14 @@ describe("get_anchors_and_paths", function()
         }
         _G.vim = vim_api_mock
 
-        ls.get_anchors_and_paths("path/to/startingdir", true)
+        ls.get_all_files("path/to/startingdir", true)
 
         assert.spy(vim_api_mock.loop.fs_scandir).was_called(2)
         assert.spy(vim_api_mock.loop.fs_scandir).was_called_with(
             "path/to/startingdir/more-notes-here")
     end)
 
-    it("should append all notes found in subdirectories when recursing",
-       function()
+    it("should add all files found in subdirectories when recursing", function()
         local outer_files = {
             "subdir", "1234567890 myfile.md", "2345678901 another.md"
         }
@@ -114,27 +136,12 @@ describe("get_anchors_and_paths", function()
         }
         _G.vim = vim_api_mock
         local expected = {
-            ["1234567890"] = "mydirectory/1234567890 myfile.md",
-            ["2345678901"] = "mydirectory/2345678901 another.md",
-            ["2222222222"] = "mydirectory/subdir/2222222222 should-be-present.md",
-            ["3333333333"] = "mydirectory/subdir/3333333333 should-also-be-present.md"
+            ["mydirectory/1234567890 myfile.md"] = "1234567890 myfile.md",
+            ["mydirectory/2345678901 another.md"] = "2345678901 another.md",
+            ["mydirectory/subdir/2222222222 should-be-present.md"] = "2222222222 should-be-present.md",
+            ["mydirectory/subdir/3333333333 should-also-be-present.md"] = "3333333333 should-also-be-present.md"
         }
-        assert.same(expected, ls.get_anchors_and_paths('mydirectory', true))
-    end)
-
-    it("should adhere to the zettel extension defined in options", function()
-        local file_list = {"1910291645 myfile.wiki", "2345678901 another.wiki"}
-        _G.vim = get_api_mock(file_list)
-        vim.g['zettel_extension'] = '.wiki'
-
-        local expected = {
-            ["1910291645"] = "mydirectory/1910291645 myfile.wiki",
-            ["2345678901"] = "mydirectory/2345678901 another.wiki"
-        }
-
-        assert.same(expected,
-                    ls.get_anchors_and_paths('mydirectory', false, vim.g))
-
+        assert.same(expected, ls.get_all_files('mydirectory', true))
     end)
 end)
 
@@ -154,7 +161,7 @@ describe("get_zettel", function()
         assert.is_not_error(function() ls.get_zettel("myanchor") end)
     end)
     it("should default to the zettel root dir if no list passed in", function()
-        local fc = stub(ls, "get_anchors_and_paths")
+        local fc = stub(ls, "get_all_files")
         local expected = require'zettelkasten.options'.zettel().rootdir
 
         ls.get_zettel(expected)
