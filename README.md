@@ -82,6 +82,8 @@ next up:
     * if moving backwards, we do not take away id space from *future* note creation
     * if moving forwards, every zettel created within a minute would delay next zettel creation *another* minute
 
+* [ ] (CODE) switch -- comments to --- doc comments for function descriptions etc
+
 ## Options
 
 atm:

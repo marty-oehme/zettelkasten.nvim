@@ -44,10 +44,10 @@ end
 function A.get_next_link_on_line(links, curpos)
     local nearestpos = BIGNUMBER
     local nearestlink
-    for k, link in pairs(links) do
-        if link.endpos > curpos and link.endpos < nearestpos then
-            nearestpos = link.endpos
-            nearestlink = link
+    for _, ln in pairs(links) do
+        if ln.endpos > curpos and ln.endpos < nearestpos then
+            nearestpos = ln.endpos
+            nearestlink = ln
         end
     end
     return nearestlink

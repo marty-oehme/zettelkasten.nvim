@@ -75,7 +75,13 @@ function ls.get_zettel_by_anchor(anchor, all)
     return all[anchor]
 end
 
+-- Returns the path to the zettel defined by a reference link.
+-- Takes a set of files as optional variable in.
+-- If no set provided will use the (recursive) results
+-- of zettel_root directory.
 function ls.get_zettel_by_ref(ref, files)
+    files = files or ls.get_all_files(o.zettel().rootdir, true)
+
     local name_only_match
     for full_path, bname in pairs(files) do
         if full_path == ref then return full_path end
@@ -83,6 +89,5 @@ function ls.get_zettel_by_ref(ref, files)
     end
     return name_only_match
 end
-
 
 return ls
