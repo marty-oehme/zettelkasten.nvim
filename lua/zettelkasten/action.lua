@@ -10,7 +10,7 @@ local BIGNUMBER = 10000000
 -- Requires a link object passed in.
 function A.open(zlink)
     if not zlink or not zlink.ref then return end
-    local fname = list.get_zettel(zlink.anchor) or zlink.ref
+    local fname = list.get_zettel_by_anchor(zlink.anchor) or zlink.ref
     vim.api.nvim_command(string.format("edit %s", fname))
 end
 

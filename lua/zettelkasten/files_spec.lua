@@ -25,8 +25,7 @@ describe("get_anchors_and_paths", function()
     it("should return anchor-keyed table pointing to filename of zettel",
        function()
         local file_list = {}
-        file_list["someDir/1910291645 this-is-a-testfile.md"] =
-            "1910291645 this-is-a-testfile.md"
+        file_list["someDir/1910291645 this-is-a-testfile.md"] = "1910291645 this-is-a-testfile.md"
         _G.vim = get_api_mock(file_list)
 
         local expected = {
@@ -41,7 +40,7 @@ describe("get_anchors_and_paths", function()
             ["someDir/1910291645 this-is-a-testfile.md"] = "1910291645 this-is-a-testfile.md",
             ["someDir/this-is-not-a-testfile.md"] = "this-is-not-a-testfile.md",
             ["1910271456 this-is-wrong-extension.txt"] = "1910271456 this-is-wrong-extension.txt",
-            ["1812 this-is-ignored.md"] = "1812 this-is-ignored.md"
+            ["1812 this-is-ignored.md"] = "1812 this-is-ignored.md",
         }
         _G.vim = get_api_mock(file_list)
 
@@ -65,7 +64,8 @@ describe("get_anchors_and_paths", function()
             ["2345678901"] = "mydirectory/2345678901 another.wiki"
         }
 
-        assert.same(expected, ls.get_anchors_and_paths(file_list, false, vim.g))
+        assert.same(expected,
+                    ls.get_anchors_and_paths(file_list, false, vim.g))
 
     end)
 end)
@@ -105,7 +105,8 @@ describe("get_all_files", function()
             "path/to/startingdir/more-notes-here")
     end)
 
-    it("should add all files found in subdirectories when recursing", function()
+    it("should add all files found in subdirectories when recursing",
+       function()
         local outer_files = {
             "subdir", "1234567890 myfile.md", "2345678901 another.md"
         }
@@ -145,7 +146,7 @@ describe("get_all_files", function()
     end)
 end)
 
-describe("get_zettel", function()
+describe("get_zettel_by_anchor", function()
     it("should return the correct zettel by id", function()
         local file_list = {
             ["1910291645"] = "1910291645 myfile.md",
@@ -154,18 +155,28 @@ describe("get_zettel", function()
         _G.vim = simple_api_mock(file_list)
 
         assert.same("1910291645 myfile.md",
-                    ls.get_zettel("1910291645", file_list))
+                    ls.get_zettel_by_anchor("1910291645", file_list))
     end)
     it("should return nil and not break on no all list passed in", function()
         stub(ls, "get_anchors_and_paths")
-        assert.is_not_error(function() ls.get_zettel("myanchor") end)
+        assert.is_not_error(function() ls.get_zettel_by_anchor("myanchor") end)
     end)
     it("should default to the zettel root dir if no list passed in", function()
         local fc = stub(ls, "get_all_files")
         local expected = require'zettelkasten.options'.zettel().rootdir
 
-        ls.get_zettel(expected)
+        ls.get_zettel_by_anchor(expected)
         assert.stub(fc).was_called_with(expected, true)
     end)
+end)
 
+describe("get_zettel_by_ref", function()
+    it("should match a full file path for non-zettel files", function()
+        local file_list = {
+            ["link/to/my/file.md"] = "file.md",
+            ["link/to/my/target-file.md"] = "target-file.md",
+        }
+        assert.same("link/to/my/target-file.md", ls.get_zettel_by_ref("target-file.md", file_list))
+
+    end)
 end)

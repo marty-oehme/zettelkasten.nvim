@@ -19,7 +19,7 @@ describe("open", function()
     end)
     it("should use the anchor to open the corresponding zettel", function()
         vim.api = {nvim_command = mock(function() end)}
-        local ls = stub(require 'zettelkasten.files', "get_zettel")
+        local ls = stub(require 'zettelkasten.files', "get_zettel_by_anchor")
 
         action.open({
             ref = "1910271456_link-to-my-file.md",
