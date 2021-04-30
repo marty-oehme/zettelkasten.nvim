@@ -53,7 +53,8 @@ function L.create(anchor, text, style)
     return parsers[style].style_func(anchor, text, o.zettel().extension)
 end
 
--- Returns a correctly formatted link to a new zettel (without anchor).
+-- Returns a correctly formatted link to a new zettel (a zettel which does not
+-- possess an anchor yet).
 -- Takes an optional link text which will be added to the link.
 -- Takes an optional style according to which the link will be transformed.
 function L.new(text, style)

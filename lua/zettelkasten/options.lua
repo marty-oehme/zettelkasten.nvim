@@ -42,7 +42,7 @@ end
 local function get_options(defaults)
     local options = {}
     local def = defaults
-    for opt, v in pairs(def) do
+    for opt, _ in pairs(def) do
 
         -- check for vim options set (globally or buffer), otherwise use default value
         options[opt] = vim.g[def[opt].vimname] or vim.b[def[opt].vimname] or

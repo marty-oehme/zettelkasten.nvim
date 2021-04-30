@@ -136,9 +136,6 @@ describe("get_anchors_and_paths", function()
                     ls.get_anchors_and_paths('mydirectory', false, vim.g))
 
     end)
-
-    it("should default to the zettel root dir",
-       function() pending("not implemented") end)
 end)
 
 describe("get_zettel", function()
