@@ -67,6 +67,7 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
   * [ ] add missing anchors
   * [ ] 'rename' anchor (goes against stability?)
   * [ ] recognize duplicate anchors (in directory, when listing, etc)
+    * [ ] potentially warn user
     * [ ] provide option to rename and automatically change backlinks
 * [ ] zettel 'lens' (preview first headline + content of linked zettel through floating window etc, on keypress)
 * [ ] support *both* md-style and wiki-style links at the same time

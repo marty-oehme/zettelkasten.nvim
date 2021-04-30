@@ -2,16 +2,14 @@ local A = {}
 
 local o = require 'zettelkasten.options'
 local link = require 'zettelkasten.link'
-local list = require 'zettelkasten.files'
-
-local BIGNUMBER = 10000000
+local files = require 'zettelkasten.files'
 
 -- Opens the link passed in in the editor's current buffer.
 -- Requires a link object passed in.
 function A.open(zlink)
     if not zlink or not zlink.ref then return end
-    local fname = list.get_zettel_by_anchor(zlink.anchor) or
-                      list.get_zettel_by_ref(zlink.ref) or zlink.ref
+    local fname = files.get_zettel_by_anchor(zlink.anchor) or
+                      files.get_zettel_by_ref(zlink.ref) or zlink.ref
     vim.api.nvim_command(string.format("edit %s", fname))
 end
 
@@ -25,12 +23,17 @@ function A.open_selected(style)
     local curpos = vim.api.nvim_win_get_cursor(0)[2]
     local links = link.extract_all(vim.api.nvim_get_current_line())
 
+    local ln
     if st == 'line' then
-        A.open(A.get_next_link_on_line(links, curpos))
+        ln = A.get_next_link_on_line(links, curpos)
     elseif st == 'cursor' then
-        A.open(A.get_link_under_cursor(links, curpos))
+        ln = A.get_link_under_cursor(links, curpos)
     end
+
+    A.open(ln)
 end
+
+function A.create_link() return end
 
 -- Returns the link currently under cursor, roughly the vim equivalent of yiW.
 -- Works for links containing spaces in their text or reference link.
@@ -43,7 +46,7 @@ end
 
 -- Returns the next link of the current line from the cursor onwards.
 function A.get_next_link_on_line(links, curpos)
-    local nearestpos = BIGNUMBER
+    local nearestpos = math.huge
     local nearestlink
     for _, ln in pairs(links) do
         if ln.endpos > curpos and ln.endpos < nearestpos then
