@@ -2,7 +2,7 @@ local A = {}
 
 local o = require 'zettelkasten.options'
 local link = require 'zettelkasten.link'
-local list = require 'zettelkasten.list'
+local list = require 'zettelkasten.files'
 
 local BIGNUMBER = 10000000
 

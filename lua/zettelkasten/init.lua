@@ -1,6 +1,6 @@
 local ZK = {}
 
-local ls = require 'zettelkasten.list'
+local ls = require 'zettelkasten.files'
 local o = require 'zettelkasten.options'
 local anchor = require 'zettelkasten.anchor'
 local action = require 'zettelkasten.action'

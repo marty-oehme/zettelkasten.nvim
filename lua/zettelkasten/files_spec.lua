@@ -1,4 +1,4 @@
-local ls = require 'zettelkasten.list'
+local ls = require 'zettelkasten.files'
 -- these tests, I suppose, only work on unix due to the file structure
 
 local function simple_api_mock(files)
