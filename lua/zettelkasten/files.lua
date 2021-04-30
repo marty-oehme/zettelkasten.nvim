@@ -73,6 +73,10 @@ function ls.get_zettel_by_anchor(anchor, files)
 end
 
 -- Returns the path to the zettel defined by a reference link.
+-- Will prefer a fully matching path to only matching basename
+-- of a file, but if only basename is found will return first
+-- matching one.
+--
 -- Takes a set of files as optional variable in.
 -- If no set provided will use the (recursive) results
 -- of zettel_root directory.

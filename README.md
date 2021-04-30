@@ -81,6 +81,7 @@ next up:
     * i.e. if 2030101200 exists move to 2030101159, 2030101158, ...
     * if moving backwards, we do not take away id space from *future* note creation
     * if moving forwards, every zettel created within a minute would delay next zettel creation *another* minute
+* to decide: should zettel creation create a zettel in current working dir or at zettel root dir? or set by option?
 
 * [ ] (CODE) switch -- comments to --- doc comments for function descriptions etc
 

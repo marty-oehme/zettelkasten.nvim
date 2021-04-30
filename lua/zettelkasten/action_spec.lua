@@ -17,7 +17,8 @@ describe("open", function()
         vim.fn = {expand = function() end}
         assert.is_not_error(action.open)
     end)
-    it("should use the anchor to open the corresponding zettel", function()
+    it("should first use the anchor to open the corresponding zettel",
+       function()
         vim.api = {nvim_command = mock(function() end)}
         local ls = stub(require 'zettelkasten.files', "get_zettel_by_anchor")
 
