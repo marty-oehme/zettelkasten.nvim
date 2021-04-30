@@ -15,9 +15,9 @@ augroup END
 
 " example plug mappings
 " nnoremap <Plug>Zettel_Link :call zettelkasten#zettel_link()<cr>
-nnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.create_zettel()<cr>
-vnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.create_zettel()<cr>
-nmap <leader>i <Plug>zettel_link_create
-vmap <leader>i <Plug>zettel_link_create
+nnoremap <Plug>zettel_link_open :lua require 'zettelkasten'.open_link()<cr>
+vnoremap <Plug>zettel_link_open :lua require 'zettelkasten'.open_link()<cr>
+nmap <leader>i <Plug>zettel_link_open
+vmap <leader>i <Plug>zettel_link_open
 
 let g:loaded_zettelkasten = 1

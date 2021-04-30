@@ -13,7 +13,10 @@ next up:
     * [ ] implement custom anchor creation function to go with custom regex
   * [ ] opening zettel should use generated link table for full filename anchor search
     * [x] need a default zettel directory to look in
-  * [ ] implement fallback to filename
+  * [ ] link following order should be:
+    * [x] look up & follow anchor
+    * [ ] look for filename in current dir (or relative/absolute link loc)
+    * [ ] implement fallback to filename in any of zettel subdirs
 
 ## TODO: needed functionality
 
@@ -54,6 +57,7 @@ next up:
   * [ ] keep tree of notes cached?
 * [ ] zettel maintenance
   * [ ] fix malformed anchors
+    * [ ] fix-link function which looks for most similar file to be found and renames file/link automatically (after confirmation)
   * [ ] add missing anchors
   * [ ] 'rename' anchor (goes against stability?)
   * [ ] recognize duplicate anchors (in directory, when listing, etc)
