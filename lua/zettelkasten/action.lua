@@ -8,9 +8,9 @@ local BIGNUMBER = 10000000
 
 -- Opens the link passed in in the editor's current buffer.
 -- Requires a link object passed in.
-function A.open(link)
-    if not link or not link.ref then return end
-    local fname = list.get_zettel(link.anchor) or link.ref
+function A.open(zlink)
+    if not zlink or not zlink.ref then return end
+    local fname = list.get_zettel(zlink.anchor) or zlink.ref
     vim.api.nvim_command(string.format("edit %s", fname))
 end
 
@@ -19,14 +19,14 @@ end
 -- Takes an optional style of link following to use,
 -- superseding the one set in options.
 function A.open_selected(style)
-    local style = style or o.link().following
+    local st = style or o.link().following
 
     local curpos = vim.api.nvim_win_get_cursor(0)[2]
     local links = link.extract_all(vim.api.nvim_get_current_line())
 
-    if style == 'line' then
+    if st == 'line' then
         A.open(A.get_next_link_on_line(links, curpos))
-    elseif style == 'cursor' then
+    elseif st == 'cursor' then
         A.open(A.get_link_under_cursor(links, curpos))
     end
 end
@@ -34,10 +34,8 @@ end
 -- Returns the link currently under cursor, roughly the vim equivalent of yiW.
 -- Works for links containing spaces in their text or reference link.
 function A.get_link_under_cursor(links, curpos)
-    for _, link in pairs(links) do
-        if link.startpos <= curpos + 1 and link.endpos > curpos then
-            return link
-        end
+    for _, l in pairs(links) do
+        if l.startpos <= curpos + 1 and l.endpos > curpos then return l end
     end
     return nil
 end
