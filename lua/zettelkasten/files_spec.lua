@@ -25,7 +25,8 @@ describe("get_anchors_and_paths", function()
     it("should return anchor-keyed table pointing to filename of zettel",
        function()
         local file_list = {}
-        file_list["someDir/1910291645 this-is-a-testfile.md"] = "1910291645 this-is-a-testfile.md"
+        file_list["someDir/1910291645 this-is-a-testfile.md"] =
+            "1910291645 this-is-a-testfile.md"
         _G.vim = get_api_mock(file_list)
 
         local expected = {
@@ -40,7 +41,7 @@ describe("get_anchors_and_paths", function()
             ["someDir/1910291645 this-is-a-testfile.md"] = "1910291645 this-is-a-testfile.md",
             ["someDir/this-is-not-a-testfile.md"] = "this-is-not-a-testfile.md",
             ["1910271456 this-is-wrong-extension.txt"] = "1910271456 this-is-wrong-extension.txt",
-            ["1812 this-is-ignored.md"] = "1812 this-is-ignored.md",
+            ["1812 this-is-ignored.md"] = "1812 this-is-ignored.md"
         }
         _G.vim = get_api_mock(file_list)
 
@@ -64,8 +65,7 @@ describe("get_anchors_and_paths", function()
             ["2345678901"] = "mydirectory/2345678901 another.wiki"
         }
 
-        assert.same(expected,
-                    ls.get_anchors_and_paths(file_list, false, vim.g))
+        assert.same(expected, ls.get_anchors_and_paths(file_list, false, vim.g))
 
     end)
 end)
@@ -105,8 +105,7 @@ describe("get_all_files", function()
             "path/to/startingdir/more-notes-here")
     end)
 
-    it("should add all files found in subdirectories when recursing",
-       function()
+    it("should add all files found in subdirectories when recursing", function()
         local outer_files = {
             "subdir", "1234567890 myfile.md", "2345678901 another.md"
         }
@@ -149,17 +148,19 @@ end)
 describe("get_zettel_by_anchor", function()
     it("should return the correct zettel by id", function()
         local file_list = {
-            ["1910291645"] = "1910291645 myfile.md",
-            ["2345678901"] = "2345678901 another.md"
+            ["aDir/1910291645 myfile.md"] = "1910291645 myfile.md",
+            ["dir/2345678901 another.md"] = "2345678901 another.md"
         }
         _G.vim = simple_api_mock(file_list)
 
-        assert.same("1910291645 myfile.md",
+        assert.same("aDir/1910291645 myfile.md",
                     ls.get_zettel_by_anchor("1910291645", file_list))
     end)
     it("should return nil and not break on no all list passed in", function()
         stub(ls, "get_anchors_and_paths")
-        assert.is_not_error(function() ls.get_zettel_by_anchor("myanchor") end)
+        assert.is_not_error(function()
+            ls.get_zettel_by_anchor("myanchor")
+        end)
     end)
     it("should default to the zettel root dir if no list passed in", function()
         local fc = stub(ls, "get_all_files")
@@ -175,23 +176,26 @@ describe("get_zettel_by_ref", function()
     it("should return a full file path for file path linked", function()
         local file_list = {
             ["link/to/my/file.md"] = "file.md",
-            ["link/to/my/target-file.md"] = "target-file.md",
+            ["link/to/my/target-file.md"] = "target-file.md"
         }
-        assert.same("link/to/my/target-file.md", ls.get_zettel_by_ref("link/to/my/target-file.md", file_list))
+        assert.same("link/to/my/target-file.md", ls.get_zettel_by_ref(
+                        "link/to/my/target-file.md", file_list))
     end)
 
-    it("should return path to matching base name if only that is linked", function()
+    it("should return path to matching base name if only that is linked",
+       function()
         local file_list = {
             ["link/to/my/file.md"] = "file.md",
-            ["link/to/my/target-file.md"] = "target-file.md",
+            ["link/to/my/target-file.md"] = "target-file.md"
         }
-        assert.same("link/to/my/target-file.md", ls.get_zettel_by_ref("target-file.md", file_list))
+        assert.same("link/to/my/target-file.md",
+                    ls.get_zettel_by_ref("target-file.md", file_list))
     end)
 
     it("should not return anything if no match exists", function()
         local file_list = {
             ["link/to/my/file.md"] = "file.md",
-            ["link/to/my/no-target-file.md"] = "no-target-file.md",
+            ["link/to/my/no-target-file.md"] = "no-target-file.md"
         }
         assert.same(nil, ls.get_zettel_by_ref("target-file.md", file_list))
     end)

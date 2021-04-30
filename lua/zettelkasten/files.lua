@@ -61,18 +61,15 @@ function ls.get_all_files(path, recursive)
 end
 
 -- Returns the path to the zettel defined by the anchor argument.
--- Takes a set of zettel as an optional variable in the form
--- { [anchorID] = "full/path/to/file.md" }
--- If no set provided, it will use the (recursive) results
--- of the zettel_root directory.
-function ls.get_zettel_by_anchor(anchor, all)
-    if not all then
-        local files = ls.get_all_files(o.zettel().rootdir, true)
-        all = ls.get_anchors_and_paths(files)
-    end
-    if not all then return end
+-- Takes a set of files as optional variable.
+-- If no set provided will use the (recursive) results
+-- of zettel_root directory.
+function ls.get_zettel_by_anchor(anchor, files)
+    files = files or ls.get_all_files(o.zettel().rootdir, true)
+    local zettels = ls.get_anchors_and_paths(files)
+    if not zettels then return end
 
-    return all[anchor]
+    return zettels[anchor]
 end
 
 -- Returns the path to the zettel defined by a reference link.
