@@ -64,12 +64,13 @@ end
 -- Take a list of zettel as an optional variable, without which
 -- it will use the (recursive) results of the zettel_root directory.
 function ls.get_zettel(anchor, all)
-    local zettels = all or
-                        ls.get_anchors_and_paths(
-                            ls.get_all_files(o.zettel().rootdir, true))
-    if not zettels then return end
+    if not all then
+        local files = ls.get_all_files(o.zettel().rootdir, true)
+        all = ls.get_anchors_and_paths(files)
+    end
+    if not all then return end
 
-    return zettels[anchor]
+    return all[anchor]
 end
 
 return ls

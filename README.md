@@ -65,6 +65,7 @@ next up:
 * [ ] zettel 'lens' (preview first headline + content of linked zettel through floating window etc, on keypress)
 * [ ] support *both* md-style and wiki-style links at the same time
 * [ ] file/directory exception list for gathering files, which will be ignored
+* [ ] 'strict' mode *only* matching and following valid anchor links
 
 ## TODO: maintenance
 

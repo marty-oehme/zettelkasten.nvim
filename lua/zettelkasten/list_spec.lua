@@ -167,4 +167,5 @@ describe("get_zettel", function()
         ls.get_zettel(expected)
         assert.stub(fc).was_called_with(expected, true)
     end)
+
 end)
