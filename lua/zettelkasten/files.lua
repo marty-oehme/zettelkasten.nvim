@@ -1,5 +1,4 @@
 local ls = {}
--- TODO rename to files.lua? since it's the only module interacting solely w/ the file system
 
 local o = require 'zettelkasten.options'
 

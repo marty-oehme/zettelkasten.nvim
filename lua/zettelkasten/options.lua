@@ -45,7 +45,7 @@ local function get_options(defaults)
     for opt, _ in pairs(def) do
 
         -- check for vim options set (globally or buffer), otherwise use default value
-        options[opt] = vim.g[def[opt].vimname] or vim.b[def[opt].vimname] or
+        options[opt] = vim.b[def[opt].vimname] or vim.g[def[opt].vimname] or
                            def[opt].default
 
         -- check correct option set for constrained value sets
