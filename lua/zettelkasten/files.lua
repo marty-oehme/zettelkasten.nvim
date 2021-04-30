@@ -76,10 +76,12 @@ function ls.get_zettel_by_anchor(anchor, all)
 end
 
 function ls.get_zettel_by_ref(ref, files)
+    local name_only_match
     for full_path, bname in pairs(files) do
-        if bname == ref then return full_path end
+        if full_path == ref then return full_path end
+        if bname == ref then name_only_match = full_path end
     end
-    return ""
+    return name_only_match
 end
 
 

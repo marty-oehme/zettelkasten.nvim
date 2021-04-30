@@ -171,12 +171,29 @@ describe("get_zettel_by_anchor", function()
 end)
 
 describe("get_zettel_by_ref", function()
-    it("should match a full file path for non-zettel files", function()
+
+    it("should return a full file path for file path linked", function()
+        local file_list = {
+            ["link/to/my/file.md"] = "file.md",
+            ["link/to/my/target-file.md"] = "target-file.md",
+        }
+        assert.same("link/to/my/target-file.md", ls.get_zettel_by_ref("link/to/my/target-file.md", file_list))
+    end)
+
+    it("should return path to matching base name if only that is linked", function()
         local file_list = {
             ["link/to/my/file.md"] = "file.md",
             ["link/to/my/target-file.md"] = "target-file.md",
         }
         assert.same("link/to/my/target-file.md", ls.get_zettel_by_ref("target-file.md", file_list))
-
     end)
+
+    it("should not return anything if no match exists", function()
+        local file_list = {
+            ["link/to/my/file.md"] = "file.md",
+            ["link/to/my/no-target-file.md"] = "no-target-file.md",
+        }
+        assert.same(nil, ls.get_zettel_by_ref("target-file.md", file_list))
+    end)
+
 end)
