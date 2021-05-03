@@ -29,6 +29,7 @@ local anchor_defaults = {
 -- TODO zettel_root = vim.g["zettel_root"] or vim.b["zettel_root"] or "~/documents/notes",
 -- TODO zettel_anchor_pattern = regex? -> needs custom creation function in `create_anchor`
 
+-- TODO refer to option name in error as well if something is not set correctly
 local function must_contain(set, value, name)
     if type(set) ~= "table" then return false end
     if not set[value] then
