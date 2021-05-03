@@ -21,7 +21,7 @@ function ZK.get_anchor() return anchor.create() end
 function ZK.open_link() return action.open_selected() end
 
 -- Create a new link under cursor
-function ZK.create_link() return action.link() end
+function ZK.create_link(visual) return action.link(visual) end
 
 return {
     get_zettel_list = ZK.get_zettel_list,

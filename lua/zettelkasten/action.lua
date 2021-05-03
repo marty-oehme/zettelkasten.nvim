@@ -33,7 +33,7 @@ function A.open_selected(style)
     A.open(ln)
 end
 
--- Returns visually selected text and line, start and end cursor position.
+-- Returns visually selected text and cursor column where selection starts.
 -- Works with selections over multiple lines, but will only return the
 -- starting line, as well as the starting line's text.
 local function get_current_selection()
@@ -41,34 +41,53 @@ local function get_current_selection()
                                      vim.fn.getpos("'<")[3],
                                      vim.fn.getpos("'>")[3]
     local selection = vim.fn.getline(line, line)[1]:sub(start_col, end_col)
-    return selection, {line, start_col, end_col}
+    return selection, start_col
 end
 
--- Returns (big) word currently under cursor, a list of current line,
--- start and end cursor position.
-local function get_current_word_big()
-    local curpos = vim.api.nvim_win_get_cursor()
-    local ln = vim.api.nvim_get_current_line()
+-- Returns word currently under cursor and cursor column where
+-- the word begins.
+-- If big argument resolves to true, it will get the whitespace
+-- delimited word, otherwise the vim specified wordboundary word.
+local function get_current_word(big)
+    local pattern = [[\k]]
+    if not big then pattern = [[\S]] end
 
-    print(ln, curpos)
+    local cur_col = vim.api.nvim_win_get_cursor(0)[2]
+    local line = vim.api.nvim_get_current_line()
 
-    -- return selection, {line, start_col, end_col}
+    local word_before_cur = vim.fn.matchstrpos(line:sub(1, cur_col + 1),
+                                               pattern .. "*$")
+    local word_start_col = word_before_cur[2] + 1
+    word_before_cur = word_before_cur[1]
+
+    local word_after_cur = vim.fn.matchstr(line:sub(cur_col + 1),
+                                           "^" .. pattern .. "*"):sub(2)
+
+    return word_before_cur .. word_after_cur, word_start_col
+end
+
+-- Sanitizes the string before replacement, taking care of escaping any
+-- characters that lua uses to signify patterns.
+local function replace(str, patt, repl, n)
+    patt = string.gsub(patt, "[%(%)%.%+%-%*%?%[%]%^%$%%]", "%%%1")
+    repl = string.gsub(repl, "[%%]", "%%%%")
+    return string.gsub(str, patt, repl, n)
 end
 
 -- Replaces the input text on the current line with a zettel link.
 -- Takes an optional initial column on which the text to be replaced starts,
 -- which can prevent falsely substituting the wrong text fragment if an
 -- identical one exists earlier on the line.
-function A.substitute_text(newtext, start_col)
-    local link = l.new(newtext)
+local function replace_text_with_link(text, start_col)
+    local link = l.new(text)
 
     local line_full = vim.api.nvim_get_current_line()
     local line_edited
     if start_col then
         line_edited = line_full:sub(1, start_col - 1) ..
-                          line_full:sub(start_col):gsub(newtext, link, 1)
+                          replace(line_full:sub(start_col), text, link, 1)
     else
-        line_edited = line_full:gsub(newtext, link, 1)
+        line_edited = replace(line_full, text, link, 1)
     end
 
     return line_edited
@@ -77,15 +96,14 @@ end
 -- Replaces the current text context with a link to a new zettel.
 -- The current context is the visual selection (if called from visual mode)
 -- or the (big) word under the cursor if called from any other mode.
-function A.link()
-    local selection, position
-    -- if vim.api.nvim_get_mode()['mode'] == "v" then
-    --     selection, position = get_current_selection()
-    -- else
-    --     print(vim.api.nvim_get_mode()['mode'])
-    -- end
-    selection, position = get_current_word_big()
-    vim.api.nvim_set_current_line(A.substitute_text(selection, position[2]))
+function A.link(visual)
+    local selection, start_col
+    if visual or vim.api.nvim_get_mode()['mode'] == "v" then
+        selection, start_col = get_current_selection()
+    else
+        selection, start_col = get_current_word()
+    end
+    vim.api.nvim_set_current_line(replace_text_with_link(selection, start_col))
 end
 
 -- Returns the link currently under cursor, roughly the vim equivalent of yiW.

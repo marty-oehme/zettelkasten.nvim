@@ -24,4 +24,9 @@ vnoremap <Plug>zettel_link_open :lua require 'zettelkasten'.open_link()<cr>
 nmap <leader>i <Plug>zettel_link_open
 vmap <leader>i <Plug>zettel_link_open
 
+nnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.create_link()<cr>
+vnoremap <Plug>zettel_link_create :lua require 'zettelkasten'.create_link(true)<cr>
+nmap <leader>o <Plug>zettel_link_create
+vmap <leader>o <Plug>zettel_link_create
+
 let g:loaded_zettelkasten = 1
