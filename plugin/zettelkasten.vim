@@ -13,6 +13,10 @@ augroup Zettelkasten
   autocmd!
 augroup END
 
+command! ZKOpen lua require('zettelkasten').open_link()
+
+command! -range ZKCreate lua require('zettelkasten').create_link()
+
 " example plug mappings
 " nnoremap <Plug>Zettel_Link :call zettelkasten#zettel_link()<cr>
 nnoremap <Plug>zettel_link_open :lua require 'zettelkasten'.open_link()<cr>

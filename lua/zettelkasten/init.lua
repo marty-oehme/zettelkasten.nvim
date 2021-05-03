@@ -20,8 +20,12 @@ function ZK.get_anchor() return anchor.create() end
 -- Open link under cursor, or next on line
 function ZK.open_link() return action.open_selected() end
 
+-- Create a new link under cursor
+function ZK.create_link() return action.link() end
+
 return {
     get_zettel_list = ZK.get_zettel_list,
     get_anchor = ZK.get_anchor,
-    open_link = ZK.open_link
+    open_link = ZK.open_link,
+    create_link = ZK.create_link
 }

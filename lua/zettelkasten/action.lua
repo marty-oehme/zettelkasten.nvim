@@ -33,7 +33,60 @@ function A.open_selected(style)
     A.open(ln)
 end
 
-function A.create_link() return end
+-- Returns visually selected text and line, start and end cursor position.
+-- Works with selections over multiple lines, but will only return the
+-- starting line, as well as the starting line's text.
+local function get_current_selection()
+    local line, start_col, end_col = vim.fn.getpos("'<")[2],
+                                     vim.fn.getpos("'<")[3],
+                                     vim.fn.getpos("'>")[3]
+    local selection = vim.fn.getline(line, line)[1]:sub(start_col, end_col)
+    return selection, {line, start_col, end_col}
+end
+
+-- Returns (big) word currently under cursor, a list of current line,
+-- start and end cursor position.
+local function get_current_word_big()
+    local curpos = vim.api.nvim_win_get_cursor()
+    local ln = vim.api.nvim_get_current_line()
+
+    print(ln, curpos)
+
+    -- return selection, {line, start_col, end_col}
+end
+
+-- Replaces the input text on the current line with a zettel link.
+-- Takes an optional initial column on which the text to be replaced starts,
+-- which can prevent falsely substituting the wrong text fragment if an
+-- identical one exists earlier on the line.
+function A.substitute_text(newtext, start_col)
+    local link = l.new(newtext)
+
+    local line_full = vim.api.nvim_get_current_line()
+    local line_edited
+    if start_col then
+        line_edited = line_full:sub(1, start_col - 1) ..
+                          line_full:sub(start_col):gsub(newtext, link, 1)
+    else
+        line_edited = line_full:gsub(newtext, link, 1)
+    end
+
+    return line_edited
+end
+
+-- Replaces the current text context with a link to a new zettel.
+-- The current context is the visual selection (if called from visual mode)
+-- or the (big) word under the cursor if called from any other mode.
+function A.link()
+    local selection, position
+    -- if vim.api.nvim_get_mode()['mode'] == "v" then
+    --     selection, position = get_current_selection()
+    -- else
+    --     print(vim.api.nvim_get_mode()['mode'])
+    -- end
+    selection, position = get_current_word_big()
+    vim.api.nvim_set_current_line(A.substitute_text(selection, position[2]))
+end
 
 -- Returns the link currently under cursor, roughly the vim equivalent of yiW.
 -- Works for links containing spaces in their text or reference link.
@@ -59,7 +112,7 @@ function A.get_next_link_on_line(links, curpos)
     return nearestlink
 end
 
-return {open = A.open, open_selected = A.open_selected}
+return {open = A.open, open_selected = A.open_selected, link = A.link}
 
 --- local function get_selection()
 ---     s_start = vim.fn.line("'<") - 1

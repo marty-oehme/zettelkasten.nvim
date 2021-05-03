@@ -105,3 +105,14 @@ describe("open_selected", function()
         end)
     end)
 end)
+
+describe("create_link", function()
+    it("substitutes the argument text with a link", function()
+        -- vim.fn = {
+        --     getpos = function() return {0, 0, 0, 0} end,
+        --     getline = function() return "testline" end
+        -- }
+        vim.cmd = function() end
+        action.create_link("my selection", 1, 1, 37)
+    end)
+end)
