@@ -8,8 +8,8 @@ local parsers = {
         ref = "%[.-%]%((.-)%)",
         text = "%[(.-)%]%(.-%)",
         style_func = function(anchor, text, extension)
-            local link = (a.prepend(anchor, L.urlify(L.trimmed(text))))
-            return "[" .. L.trimmed(text) .. "](" .. link .. extension .. ")"
+            local link = (a.prepend(anchor, L.urlify(L.trim(text))))
+            return "[" .. L.trim(text) .. "](" .. link .. extension .. ")"
         end
     },
     wiki = {
@@ -17,7 +17,7 @@ local parsers = {
         text = "%[%[.-|?(.-)%]%]",
         style_func = function(anchor, text)
             local pipetxt = ""
-            text = L.trimmed(text)
+            text = L.trim(text)
 
             if text and text ~= "" then pipetxt = "|" .. text end
             return "[[" .. anchor .. pipetxt .. "]]"
@@ -38,7 +38,7 @@ function L.append_extension(text) return text .. o.zettel().extension end
 
 -- Returns text with surrounding whitespace trimmed. Returns empty string
 -- if only whitespace.
-function L.trimmed(text)
+function L.trim(text)
     if not text then return end
     return text:match '^()%s*$' and '' or text:match '^%s*(.*%S)'
 end

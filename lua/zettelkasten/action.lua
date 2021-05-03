@@ -1,15 +1,15 @@
 local A = {}
 
 local o = require 'zettelkasten.options'
-local link = require 'zettelkasten.link'
-local files = require 'zettelkasten.files'
+local l = require 'zettelkasten.link'
+local f = require 'zettelkasten.files'
 
 -- Opens the link passed in in the editor's current buffer.
 -- Requires a link object passed in.
-function A.open(zlink)
-    if not zlink or not zlink.ref then return end
-    local fname = files.get_zettel_by_anchor(zlink.anchor) or
-                      files.get_zettel_by_ref(zlink.ref) or zlink.ref
+function A.open(link)
+    if not link or not link.ref then return end
+    local fname = f.get_zettel_by_anchor(link.anchor) or
+                      f.get_zettel_by_ref(link.ref) or link.ref
     vim.api.nvim_command(string.format("edit %s", fname))
 end
 
@@ -21,7 +21,7 @@ function A.open_selected(style)
     local st = style or o.link().following
 
     local curpos = vim.api.nvim_win_get_cursor(0)[2]
-    local links = link.extract_all(vim.api.nvim_get_current_line())
+    local links = l.extract_all(vim.api.nvim_get_current_line())
 
     local ln
     if st == 'line' then
@@ -38,8 +38,10 @@ function A.create_link() return end
 -- Returns the link currently under cursor, roughly the vim equivalent of yiW.
 -- Works for links containing spaces in their text or reference link.
 function A.get_link_under_cursor(links, curpos)
-    for _, l in pairs(links) do
-        if l.startpos <= curpos + 1 and l.endpos > curpos then return l end
+    for _, link in pairs(links) do
+        if link.startpos <= curpos + 1 and link.endpos > curpos then
+            return link
+        end
     end
     return nil
 end

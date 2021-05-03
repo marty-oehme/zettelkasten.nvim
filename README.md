@@ -16,6 +16,7 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
   * [ ] list filenames
 * [x] link following (to existing anchor)
   * [x] fallback to filename if anchor invalid / not found
+  * [ ] maintain location list of previous jumps
 * [ ] link creation (to existing note)
   * [ ] list existing
   * [ ] create link (md / wiki)
