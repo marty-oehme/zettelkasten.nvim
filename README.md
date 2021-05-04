@@ -4,6 +4,12 @@ To develop / debug:
 
 start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
 
+## up next
+
+* automatic switch between follow link / create link
+* text.lua testing
+* action.lua testing?
+
 ## TODO: needed functionality
 
 * [ ] note creation (new anchor)
