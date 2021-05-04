@@ -6,7 +6,6 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
 
 ## up next
 
-* automatic switch between follow link / create link
 * text.lua testing
 * action.lua testing?
 
@@ -22,10 +21,11 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
   * [ ] list filenames
 * [x] link following (to existing anchor)
   * [x] fallback to filename if anchor invalid / not found
-  * [ ] maintain location list of previous jumps
+  * [x] maintain location list of previous jumps
 * [ ] link creation (to existing note)
   * [ ] list existing
   * [ ] create link (md / wiki)
+* [x] allow same command for following/creating link depending on cursor over link or not
 * [ ] link switching (point to another existing note)
 * [ ] note search (title / full-text)
 * [x] jump to zettel (open existing anchor)
@@ -80,6 +80,7 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
 * [ ] support *both* md-style and wiki-style links at the same time
 * [ ] file/directory exception list for gathering files, which will be ignored
 * [ ] 'strict' mode *only* matching and following valid anchor links
+* [ ] link creation - remove special marks, make customizable (e.g. i- will: help. -> i--will:-help..md [currently] -> i-will-help.md [possibly])
 
 ## Options
 

@@ -31,7 +31,10 @@ function A.open_selected(style)
         ln = t.get_link_under_cursor(links, curpos)
     end
 
+    if not ln then return false end
+
     A.open(ln)
+    return true
 end
 
 -- Replaces the current text context with a link to a new zettel.
@@ -39,7 +42,7 @@ end
 -- or the (big) word under the cursor if called from any other mode.
 function A.make_link(visual)
     local selection, start_col
-    if visual or vim.api.nvim_get_mode()['mode'] == "v" then
+    if visual then
         selection, start_col = t.get_current_selection()
     else
         selection, start_col = t.get_current_word()
