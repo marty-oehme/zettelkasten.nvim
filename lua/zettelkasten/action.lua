@@ -22,7 +22,7 @@ function A.open_selected(style)
     style = style or o.link().following
 
     local curpos = vim.api.nvim_win_get_cursor(0)[2]
-    local links = l.extract_all(vim.api.nvim_get_current_line())
+    local links = l.extract_all(t.get_line())
 
     local ln
     if style == 'line' then

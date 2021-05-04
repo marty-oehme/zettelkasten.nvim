@@ -34,18 +34,17 @@ describe("open_selected", function()
     before_each(function()
         vim.api = {
             nvim_command = mock(function() end),
-            nvim_get_current_line = function(sure)
+            nvim_get_current_line = function(_)
                 return
                     "Hello, this is a line and [mylink](1910271456_link-to-my-file.md) whereas another [link](2030101158 another-link-now.md)"
             end,
-            nvim_win_get_cursor = function(winnum) return {0, 0} end
+            nvim_win_get_cursor = function(_) return {0, 0} end
         }
     end)
     describe("when looking under cursor", function()
         it("should open link", function()
             vim.g['zettel_link_following'] = 'cursor'
-            vim.api.nvim_win_get_cursor =
-                function(winnum) return {0, 30} end
+            vim.api.nvim_win_get_cursor = function(_) return {0, 30} end
             action.open_selected()
             assert.spy(vim.api.nvim_command).was_called_with(
                 "edit 1910271456_link-to-my-file.md")
@@ -53,13 +52,11 @@ describe("open_selected", function()
         it("should detect correct position for link start", function()
             vim.g['zettel_link_following'] = 'cursor'
 
-            vim.api.nvim_win_get_cursor =
-                function(winnum) return {0, 25} end
+            vim.api.nvim_win_get_cursor = function(_) return {0, 25} end
             action.open_selected()
             assert.spy(vim.api.nvim_command).was_not_called()
 
-            vim.api.nvim_win_get_cursor =
-                function(winnum) return {0, 26} end
+            vim.api.nvim_win_get_cursor = function(_) return {0, 26} end
             action.open_selected()
             assert.spy(vim.api.nvim_command).was_called_with(
                 "edit 1910271456_link-to-my-file.md")
@@ -67,13 +64,11 @@ describe("open_selected", function()
         it("should detect correct position for link end", function()
             vim.g['zettel_link_following'] = 'cursor'
 
-            vim.api.nvim_win_get_cursor =
-                function(winnum) return {0, 65} end
+            vim.api.nvim_win_get_cursor = function(_) return {0, 65} end
             action.open_selected()
             assert.spy(vim.api.nvim_command).was_not_called()
 
-            vim.api.nvim_win_get_cursor =
-                function(winnum) return {0, 64} end
+            vim.api.nvim_win_get_cursor = function(_) return {0, 64} end
             action.open_selected()
             assert.spy(vim.api.nvim_command).was_called_with(
                 "edit 1910271456_link-to-my-file.md")
@@ -97,8 +92,7 @@ describe("open_selected", function()
         end)
         it("should ignore links before cursor position", function()
             vim.g['zettel_link_following'] = 'line'
-            vim.api.nvim_win_get_cursor =
-                function(winnum) return {0, 65} end
+            vim.api.nvim_win_get_cursor = function(_) return {0, 65} end
             action.open_selected()
             assert.spy(vim.api.nvim_command).was_called_with(
                 "edit 2030101158 another-link-now.md")
@@ -108,12 +102,15 @@ end)
 
 describe("create_link", function()
     it("substitutes the argument text with a link", function()
-        -- vim.fn = {
-        --     getpos = function() return {0, 0, 0, 0} end,
-        --     getline = function() return "testline" end
-        -- }
         pending()
-        vim.cmd = function() end
-        action.create_link("my selection", 1, 1, 37)
+        vim.fn = {getpos = function() return {1, 2, 3} end}
+        vim.api = {
+            nvim_buf_get_lines = function() return {"hi", 1, 2} end,
+            nvim_win_get_cursor = function() return {1, 1, 2} end,
+            nvim_get_current_line = function()
+                return "hi i am a line"
+            end
+        }
+        action.make_link()
     end)
 end)
