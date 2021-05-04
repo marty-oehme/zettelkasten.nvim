@@ -17,18 +17,18 @@ end
 -- delimited word, otherwise the vim specified wordboundary word.
 function T.get_current_word(big)
     local pattern = [[\k]]
-    if not big then
-        pattern = [[\S]]
-    end
+    if not big then pattern = [[\S]] end
 
     local cur_col = vim.api.nvim_win_get_cursor(0)[2]
     local line = vim.api.nvim_get_current_line()
 
-    local word_before_cur = vim.fn.matchstrpos(line:sub(1, cur_col + 1), pattern .. "*$")
+    local word_before_cur = vim.fn.matchstrpos(line:sub(1, cur_col + 1),
+                                               pattern .. "*$")
     local word_start_col = word_before_cur[2] + 1
     word_before_cur = word_before_cur[1]
 
-    local word_after_cur = vim.fn.matchstr(line:sub(cur_col + 1), "^" .. pattern .."*"):sub(2)
+    local word_after_cur = vim.fn.matchstr(line:sub(cur_col + 1),
+                                           "^" .. pattern .. "*"):sub(2)
 
     return word_before_cur .. word_after_cur, word_start_col
 end
@@ -81,6 +81,17 @@ function T.replace_text(text, new_text, start_col)
     end
 
     return line_edited
+end
+
+--- Return editor line contents.
+-- Returns the content of the line number passed in or the currently active
+-- line if no number passed in. Lines are, as per neovim function,
+-- *zero-indexed* compared to what you see in e.g. the editor sidebar.
+--- @param linenr number
+--- @return string
+function T.get_line(linenr)
+    if linenr then return vim.api.nvim_buf_get_lines(0, linenr, linenr + 1) end
+    return vim.api.nvim_get_current_line()
 end
 
 return T
