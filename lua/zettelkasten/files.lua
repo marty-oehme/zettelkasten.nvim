@@ -24,6 +24,7 @@ end
 -- TODO transform paths:
 --    * to ensure / at the end (or no /) gets taken into account
 function ls.get_anchors_and_paths(fileset)
+    fileset = fileset or ls.get_all_files(o.zettel().rootdir, true)
     -- TODO check for duplicates and warn user
     local zettel = {}
     local anchorreg = '^.*/?(' .. o.anchor().regex .. ')[^/]*%' ..

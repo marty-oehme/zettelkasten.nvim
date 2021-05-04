@@ -90,7 +90,9 @@ end
 --- @param linenr number
 --- @return string
 function T.get_line(linenr)
-    if linenr then return vim.api.nvim_buf_get_lines(0, linenr - 1, linenr, false)[1] end
+    if linenr then
+        return vim.api.nvim_buf_get_lines(0, linenr - 1, linenr, false)[1]
+    end
     return vim.api.nvim_get_current_line()
 end
 

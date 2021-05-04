@@ -2,6 +2,7 @@ local L = {}
 
 local o = require 'zettelkasten.options'
 local a = require 'zettelkasten.anchor'
+local f = require 'zettelkasten.files'
 
 local parsers = {
     markdown = {
@@ -58,7 +59,7 @@ end
 -- Takes an optional link text which will be added to the link.
 -- Takes an optional style according to which the link will be transformed.
 function L.new(text, style)
-    local anchor = a.create()
+    local anchor = a.create(nil, f.get_anchors_and_paths)
     return L.create(anchor, text, style)
 end
 

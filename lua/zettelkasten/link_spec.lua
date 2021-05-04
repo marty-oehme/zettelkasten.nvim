@@ -1,4 +1,4 @@
-link = require 'zettelkasten.link'
+local link = require 'zettelkasten.link'
 Test_date = {year = 2019, month = 10, day = 29, hour = 16, min = 45}
 
 before_each(function() _G.vim = {g = {}, b = {}} end)
@@ -79,6 +79,12 @@ describe("create", function()
 end)
 
 describe("new", function()
+    before_each(function()
+        vim.loop = {
+            fs_scandir = function(_) return false end,
+            fs_scandir_next = function(_) end
+        }
+    end)
     it("should create a link out of only text input", function()
         local result = link.new("My FILE NAME")
         assert.is_not_nil(result:match(

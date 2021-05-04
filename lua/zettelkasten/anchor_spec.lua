@@ -14,6 +14,22 @@ describe("create", function()
 
     it("should return nil if argument passed in is invalid",
        function() assert.is_nil(A.create("My grandmother is lovely.")) end)
+
+    it(
+        "should lower timestamps until the first non-duplicated one if valid anchor gathering function passed",
+        function()
+            Anchor_fct = function()
+                return {
+                    ["2010261208"] = "/path/to/my/anchor.md",
+                    ["1910291645"] = "/path/to/my/other_anchor.md"
+                }
+            end
+            assert.same("1910291644", A.create(Test_date, Anchor_fct))
+        end)
+
+    it(
+        "should ignore duplicate timestamps if no anchor gathering function passed",
+        function() assert.same("1910291645", A.create(Test_date)) end)
 end)
 
 describe("prepend", function()
@@ -60,4 +76,34 @@ describe("extract", function()
                         "/home/office/docs/bO133T-we are the champions.md",
                         "[%l][%u][%d][%d][%d][%u]"))
     end)
+end)
+
+describe("list", function()
+    it("should return a set of anchors", function()
+        local anchor_fct = function()
+            return {
+                ["2010261208"] = "/path/to/my/anchor.md",
+                ["2001011212"] = "/path/to/my/other_anchor.md"
+            }
+        end
+        assert.same({
+            ["2010261208"] = "/path/to/my/anchor.md",
+            ["2001011212"] = '/path/to/my/other_anchor.md'
+        }, A.list(anchor_fct))
+    end)
+end)
+
+describe("check_anchor_exists", function()
+    before_each(function()
+        Anchor_fct = function()
+            return {
+                ["2010261208"] = "/path/to/my/anchor.md",
+                ["2001011212"] = "/path/to/my/other_anchor.md"
+            }
+        end
+    end)
+    it("returns true if anchor in existing set",
+       function() assert.is_true(A.is_duplicate('2001011212', Anchor_fct)) end)
+    it("returns false if anchor not in existing set",
+       function() assert.is_false(A.is_duplicate('2001011210', Anchor_fct)) end)
 end)
