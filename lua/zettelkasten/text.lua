@@ -7,7 +7,7 @@ function T.get_current_selection()
     local line, start_col, end_col = vim.fn.getpos("'<")[2],
                                      vim.fn.getpos("'<")[3],
                                      vim.fn.getpos("'>")[3]
-    local selection = vim.fn.getline(line, line)[1]:sub(start_col, end_col)
+    local selection = T.get_line(line):sub(start_col, end_col)
     return selection, start_col
 end
 
@@ -20,7 +20,7 @@ function T.get_current_word(big)
     if not big then pattern = [[\S]] end
 
     local cur_col = vim.api.nvim_win_get_cursor(0)[2]
-    local line = vim.api.nvim_get_current_line()
+    local line = T.get_line()
 
     local word_before_cur = vim.fn.matchstrpos(line:sub(1, cur_col + 1),
                                                pattern .. "*$")
@@ -70,8 +70,8 @@ end
 -- which can prevent falsely substituting the wrong text fragment if an
 -- identical one exists earlier on the line. (E.g. I want to replace the
 -- second 'test' in 'test test 1 2 3').
-function T.replace_text(text, new_text, start_col)
-    local line_full = vim.api.nvim_get_current_line()
+function T.replace_text_in_current_line(text, new_text, start_col)
+    local line_full = T.get_line()
     local line_edited
     if start_col then
         line_edited = line_full:sub(1, start_col - 1) ..
@@ -85,12 +85,12 @@ end
 
 --- Return editor line contents.
 -- Returns the content of the line number passed in or the currently active
--- line if no number passed in. Lines are, as per neovim function,
--- *zero-indexed* compared to what you see in e.g. the editor sidebar.
+-- line if no number passed in. Lines are, different to the neovim function,
+-- *one-indexed*.
 --- @param linenr number
 --- @return string
 function T.get_line(linenr)
-    if linenr then return vim.api.nvim_buf_get_lines(0, linenr, linenr + 1) end
+    if linenr then return vim.api.nvim_buf_get_lines(0, linenr - 1, linenr, false)[1] end
     return vim.api.nvim_get_current_line()
 end
 

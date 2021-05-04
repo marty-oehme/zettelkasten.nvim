@@ -47,8 +47,9 @@ function A.make_link(visual)
     else
         selection, start_col = t.get_current_word()
     end
-    vim.api.nvim_set_current_line(t.replace_text(selection, l.new(selection),
-                                                 start_col))
+    vim.api.nvim_set_current_line(t.replace_text_in_current_line(selection,
+                                                                 l.new(selection),
+                                                                 start_col))
 end
 
 return {open = A.open, open_selected = A.open_selected, make_link = A.make_link}

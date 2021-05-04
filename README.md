@@ -6,7 +6,6 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
 
 ## up next
 
-* text.lua testing
 * action.lua testing?
 
 ## TODO: needed functionality
