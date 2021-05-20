@@ -1,4 +1,3 @@
-" TODO remove after debugging
 if exists('g:loaded_zettelkasten')
   finish
 endif
