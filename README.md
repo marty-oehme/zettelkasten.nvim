@@ -1,19 +1,27 @@
 # Zettelkasten.nvim
 
-To develop / debug:
+A simple Zettelkasten plugin.
 
-start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
+Currently allows note link creation
+(automatically appending a time-based anchor to each created note)
+in markdown and wiki-link style, as well as following links to other notes,
+wherever they are in the notes directory.
+
+Not much more has been implemented yet,
+but some options can already be configured by the user.
 
 ## up next
 
-* action.lua testing?
+* action.lua testing
+* note listing
+* note jumping (existing to existing)
 
 ## TODO: needed functionality
 
 * [ ] note creation (new anchor)
   * [x] create anchor
-    * [ ] *unique* anchor creation
-    * [ ] implement custom anchor creation function to go with custom anchor regex
+    * [x] *unique* anchor creation
+    * [ ] implement custom anchor creation function to go with custom anchor regex (turn anchor options into objects similar to parsers, to let *them* do the work)
   * [x] create link (md / wiki)
 * [ ] note listing (anchors / titles, no anchor)
   * [ ] list anchors
@@ -27,9 +35,9 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
 * [x] allow same command for following/creating link depending on cursor over link or not
 * [ ] link switching (point to another existing note)
 * [ ] note search (title / full-text)
-* [x] jump to zettel (open existing anchor)
-  * [x] select by anchor
-  * [x] select by link/title match
+* [ ] jump to zettel (open existing anchor)
+  * [ ] select by anchor
+  * [ ] select by link/title match
   * [ ] Opt: select by fuzzy title match
 * [ ] options
  * [x] zettel anchor separator
@@ -38,7 +46,7 @@ start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the fi
   * [ ] custom link style?
  * [x] link detection/following (under word, next on line)
  * [ ] recursive dir lookup for zettel
- * [ ] zettel anchor regex
+ * [x] zettel anchor regex
 
 ## TODO: maintenance
 
@@ -107,3 +115,7 @@ Since, as long as the api still changes rapidly,
 a list of options would quickly be outdated,
 what you can instead is to look into `options.lua`,
 where at the top the currently effective options with their defaults and available values are defined.
+
+## Developing / Debugging
+
+start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
