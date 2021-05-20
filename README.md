@@ -10,6 +10,71 @@ wherever they are in the notes directory.
 Not much more has been implemented yet,
 but some options can already be configured by the user.
 
+Lastly, this plugin is in *very* rough shape,
+so don't expect too much as of now.
+It works what I desperately needed it to work for
+and thus the additional functionalities will only come trickling in,
+but there's not much here yet.
+
+## Usage
+
+The one mapping you probably want to undertake (replacing the mapping as needed) is:
+
+```vim
+nnoremap <cr> :lua require 'zettelkasten'.open_or_make_link()<cr>
+vnoremap <cr> :lua require 'zettelkasten'.open_or_make_link(true)<cr>
+```
+
+This will allow you to create new links when over any text,
+or having text selected;
+as well as follow links to existing or new notes.
+It will look through your notes in the zettel directory you set
+(look below).
+
+Other exposed functions currently are:
+
+`:lua require 'zettelkasten'.get_zettel_list(path, recursive)`
+
+to list all existing zettel (path is required, recursive is an optional variable to go into sub-directories).
+
+Lastly,
+
+```vim
+:lua require 'zettelkasten'.open_link()
+:lua require 'zettelkasten'.make_link(visualmode)
+```
+
+allows you to separate the link following and creation set above.
+
+## Options
+
+Options can currently be set via lua:
+
+```lua
+vim.g["zettel_extension"] = ".wiki"
+```
+
+or via vimscript:
+
+```vim
+let g:zettel_extension = ".wiki"
+let g:zettel_root = "~/documents/zettel"
+```
+
+The functionality is the same. The plugin will look up options by precedence buffer > global > default.
+
+```lua
+anchor_separator = vim.b["zettel_anchor_separator"] or vim.g["zettel_anchor_separator"] or "_",
+zettel_extension = vim.b["zettel_extension"] or vim.g["zettel_extension"] or ".md",
+zettel_root = vim.b["zettel_root"] or vim.g["zettel_root"] or "~/documents/notes",
+```
+
+Since, as long as the api still changes rapidly,
+a list of options would quickly be outdated,
+what you can instead is to look into `options.lua`,
+where at the top the currently effective options with their defaults and available values are defined.
+
+
 ## up next
 
 * action.lua testing
@@ -89,32 +154,6 @@ but some options can already be configured by the user.
 * [ ] 'strict' mode *only* matching and following valid anchor links
 * [ ] link creation - remove special marks, make customizable (e.g. i- will: help. -> i--will:-help..md [currently] -> i-will-help.md [possibly])
 
-## Options
-
-Options can currently be set via lua:
-
-```lua
-vim.g["zettel_extension"] = ".wiki"
-```
-
-or via vimscript:
-
-```vim
-let g:zettel_extension = ".wiki"
-```
-
-The functionality is the same. The plugin will look up options by precedence buffer > global > default.
-
-```lua
-anchor_separator = vim.b["zettel_anchor_separator"] or vim.g["zettel_anchor_separator"] or "_",
-zettel_extension = vim.b["zettel_extension"] or vim.g["zettel_extension"] or ".md",
-zettel_root = vim.b["zettel_root"] or vim.g["zettel_root"] or "~/documents/notes",
-```
-
-Since, as long as the api still changes rapidly,
-a list of options would quickly be outdated,
-what you can instead is to look into `options.lua`,
-where at the top the currently effective options with their defaults and available values are defined.
 
 ## Developing / Debugging
 
