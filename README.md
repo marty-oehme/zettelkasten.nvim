@@ -51,14 +51,15 @@ allows you to separate the link following and creation set above.
 Options can currently be set via lua:
 
 ```lua
-vim.g["zettel_extension"] = ".wiki"
+vim.g["zettel_extension"] = ".md"
+vim.g["zettel_root"] = "~/documents/notes"
 ```
 
 or via vimscript:
 
 ```vim
 let g:zettel_extension = ".wiki"
-let g:zettel_root = "~/documents/zettel"
+let g:zettel_root = "~/documents/notes"
 ```
 
 The functionality is the same. The plugin will look up options by precedence buffer > global > default.
@@ -73,7 +74,6 @@ Since, as long as the api still changes rapidly,
 a list of options would quickly be outdated,
 what you can instead is to look into `options.lua`,
 where at the top the currently effective options with their defaults and available values are defined.
-
 
 ## up next
 
@@ -119,24 +119,25 @@ where at the top the currently effective options with their defaults and availab
 ## TODO: maintenance
 
 * [ ] remove hard-coding of option vimnames in tests, now that we can dynamically change this through a single table
+* [ ] change options handling, so there's no function having to be invoked every time (`o.zettel().extension`..) (e.g. through initial setup function)
 
 ## Anchor Creation
 
-  * *must* be unique
-  * default: 10 digits, usually current date+time (YYMMDDHHmm)
-  * but, if multiple links created within one minute (or other circumstances), this would duplicate
-  * thus, duplicate-check before creating a new anchor
-    * go through all existing zettels and check id
-    * but also, what if generating multiple new zettels quickly after another? (e.g. vim macro)
-        * then new zettel do not exist as a file yet, thus can not be checked for
-        * possibly unique anchor function should check both files and existing anchor id's in currently open zettel (e.g. in links)
-            * can not possibly check in all other zettels, and should rarely be necessary for zettel creation
-        * then, merge the two existing lists and check for uniqueness in merged list?
-  * if duplicated, generate first *non*-duplicated link (recursive?)
-    * try to move *backwards* through minutes not forward
-      * i.e. if 2030101200 exists move to 2030101159, 2030101158, ...
-    * if moving backwards, we do not take away id space from *future* note creation
-      * if moving forwards, every zettel created within a minute would delay next zettel creation *another* minute
+* *must* be unique
+* default: 10 digits, usually current date+time (YYMMDDHHmm)
+* but, if multiple links created within one minute (or other circumstances), this would duplicate
+* thus, duplicate-check before creating a new anchor
+  * go through all existing zettels and check id
+  * but also, what if generating multiple new zettels quickly after another? (e.g. vim macro)
+      * then new zettel do not exist as a file yet, thus can not be checked for
+      * possibly unique anchor function should check both files and existing anchor id's in currently open zettel (e.g. in links)
+          * can not possibly check in all other zettels, and should rarely be necessary for zettel creation
+      * then, merge the two existing lists and check for uniqueness in merged list?
+* if duplicated, generate first *non*-duplicated link (recursive?)
+  * try to move *backwards* through minutes not forward
+    * i.e. if 2030101200 exists move to 2030101159, 2030101158, ...
+  * if moving backwards, we do not take away id space from *future* note creation
+    * if moving forwards, every zettel created within a minute would delay next zettel creation *another* minute
 
 * to decide: should zettel creation create a zettel in current working dir or at zettel root dir? or set by option?
 
@@ -166,7 +167,6 @@ where at the top the currently effective options with their defaults and availab
 * [ ] link creation - remove special marks, make customizable (e.g. i- will: help. -> i--will:-help..md [currently] -> i-will-help.md [possibly])
 * [ ] option to automatically save on switching zettel, making link jumping/ zettel creation easier
 * [ ] function exposed to jump cursor to next/previous link
-
 * [ ] index file functionality
     * [ ] several default options (index, home, wiki, ..)
     * [ ] optionally look for index file in sub-directories (could allow 'zettel' being directories as well)
@@ -174,4 +174,15 @@ where at the top the currently effective options with their defaults and availab
 
 ## Developing / Debugging
 
-start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path
+start neovim with  `nvim --cmd "set rtp+=$(pwd)" .` to automatically load the files in project dir as if they were on path.
+
+Put the following function in the plugin directory as `debug.vim` or similar and you can instantly reload the plugin during development.
+
+```lua
+" TODO for DEBUGGING ONLY: reloads the whole lua plugin
+fun! ZKReload()
+  lua for k in pairs(package.loaded) do if k:match("^zettelkasten")  then package.loaded[k] = nil end end
+  lua require 'zettelkasten'
+endfun
+nnoremap <leader>R :call ZKReload()<cr>
+```
