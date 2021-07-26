@@ -28,10 +28,15 @@ function ZK.open_or_make_link(visual)
     if not ZK.open_link() then ZK.make_link(visual) end
 end
 
+-- Open index file at zettel root directory. If title is passed in opens
+-- `title`.<extension> file, otherwise defaults to `index`.<extension>.
+function ZK.open_index(title) return action.open_index_file(title) end
+
 return {
     get_zettel_list = ZK.get_zettel_list,
     get_anchor = ZK.get_anchor,
     open_link = ZK.open_link,
     make_link = ZK.make_link,
-    open_or_make_link = ZK.open_or_make_link
+    open_or_make_link = ZK.open_or_make_link,
+    open_index = ZK.open_index
 }

@@ -77,7 +77,6 @@ where at the top the currently effective options with their defaults and availab
 
 ## up next
 
-* action.lua testing
 * note listing
 * note jumping (existing to existing)
 
@@ -85,7 +84,8 @@ where at the top the currently effective options with their defaults and availab
 
 * [ ] note creation (new anchor)
   * [x] create anchor
-    * [x] *unique* anchor creation
+    * [x] *unique* anchor creation checking existing zettels
+    * [ ] unique anchor creation for multiple quick-repetition link creation (see [#anchor creation] section)
     * [ ] implement custom anchor creation function to go with custom anchor regex (turn anchor options into objects similar to parsers, to let *them* do the work)
   * [x] create link (md / wiki)
 * [ ] note listing (anchors / titles, no anchor)
@@ -112,21 +112,32 @@ where at the top the currently effective options with their defaults and availab
  * [x] link detection/following (under word, next on line)
  * [ ] recursive dir lookup for zettel
  * [x] zettel anchor regex
+ * [ ] open zettel root directory / index page
+    * [x] index.md at root directory
+    * [x] custom index page name option
 
 ## TODO: maintenance
 
 * [ ] remove hard-coding of option vimnames in tests, now that we can dynamically change this through a single table
 
-* anchor creation
+## Anchor Creation
+
   * *must* be unique
   * default: 10 digits, usually current date+time (YYMMDDHHmm)
   * but, if multiple links created within one minute (or other circumstances), this would duplicate
   * thus, duplicate-check before creating a new anchor
+    * go through all existing zettels and check id
+    * but also, what if generating multiple new zettels quickly after another? (e.g. vim macro)
+        * then new zettel do not exist as a file yet, thus can not be checked for
+        * possibly unique anchor function should check both files and existing anchor id's in currently open zettel (e.g. in links)
+            * can not possibly check in all other zettels, and should rarely be necessary for zettel creation
+        * then, merge the two existing lists and check for uniqueness in merged list?
   * if duplicated, generate first *non*-duplicated link (recursive?)
-  * try to move *backwards* through minutes not forward
-    * i.e. if 2030101200 exists move to 2030101159, 2030101158, ...
+    * try to move *backwards* through minutes not forward
+      * i.e. if 2030101200 exists move to 2030101159, 2030101158, ...
     * if moving backwards, we do not take away id space from *future* note creation
-    * if moving forwards, every zettel created within a minute would delay next zettel creation *another* minute
+      * if moving forwards, every zettel created within a minute would delay next zettel creation *another* minute
+
 * to decide: should zettel creation create a zettel in current working dir or at zettel root dir? or set by option?
 
 * [ ] (CODE) switch -- comments to --- doc comments for function descriptions etc
@@ -153,7 +164,13 @@ where at the top the currently effective options with their defaults and availab
 * [ ] file/directory exception list for gathering files, which will be ignored
 * [ ] 'strict' mode *only* matching and following valid anchor links
 * [ ] link creation - remove special marks, make customizable (e.g. i- will: help. -> i--will:-help..md [currently] -> i-will-help.md [possibly])
+* [ ] option to automatically save on switching zettel, making link jumping/ zettel creation easier
+* [ ] function exposed to jump cursor to next/previous link
 
+* [ ] index file functionality
+    * [ ] several default options (index, home, wiki, ..)
+    * [ ] optionally look for index file in sub-directories (could allow 'zettel' being directories as well)
+    * [ ] if not existing could be auto-populated by adjacent zettel links (e.g. in same directory; backlinked; ..)
 
 ## Developing / Debugging
 

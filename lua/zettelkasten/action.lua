@@ -52,4 +52,19 @@ function A.make_link(visual)
                                                                  start_col))
 end
 
-return {open = A.open, open_selected = A.open_selected, make_link = A.make_link}
+-- Opens an index.md file at the zettelkasten root directory whether it
+-- exists or not.
+function A.open_index_file(name)
+    local link = {
+        ref = o.zettel().rootdir .. "/" .. (name or "index") ..
+            o.zettel().extension
+    }
+    A.open(link)
+end
+
+return {
+    open = A.open,
+    open_selected = A.open_selected,
+    open_index_file = A.open_index_file,
+    make_link = A.make_link
+}
