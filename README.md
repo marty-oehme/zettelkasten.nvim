@@ -20,6 +20,8 @@ but there's not much here yet.
 
 The one mapping you probably want to undertake (replacing the mapping as needed) is:
 
+### Linking
+
 ```vim
 nnoremap <cr> :lua require 'zettelkasten'.open_or_make_link()<cr>
 vnoremap <cr> :lua require 'zettelkasten'.open_or_make_link(true)<cr>
@@ -29,22 +31,43 @@ This will allow you to create new links when over any text,
 or having text selected;
 as well as follow links to existing or new notes.
 It will look through your notes in the zettel directory you set
-(look below).
+(look for the options below).
+If you pass in `true` it will work for visual mode instead of normal mode instead.
 
-Other exposed functions currently are:
-
-`:lua require 'zettelkasten'.get_zettel_list(path, recursive)`
-
-to list all existing zettel (path is required, recursive is an optional variable to go into sub-directories).
-
-Lastly,
+The function is also exposed as vim mapping `<Plug>zettel_link_follow`, so can be 
+set via `map <cr> <Plug>zettel_link_follow` to get the same result as above.
 
 ```vim
 :lua require 'zettelkasten'.open_link()
 :lua require 'zettelkasten'.make_link(visualmode)
 ```
 
-allows you to separate the link following and creation set above.
+allows you to separate the link following and creation set by one function above.
+Again, you can pass in `true` for link creation to make it work 
+correctly from visual mode.
+
+The functions are again exposed as `<Plug>zettel_link_open` and
+`<Plug>zettel_link_make` respectively.
+
+
+```vim
+```
+
+
+### Listing
+
+You can have a valid zettel anchor returned by using the 
+`:lua require 'zettelkasten'.get_anchor()` function.
+
+The only other exposed function currently is:
+
+`:lua require 'zettelkasten'.get_zettel_list(path, recursive)`
+
+to list all existing zettel in a directory.
+The path in this instance is required.
+Recursive is an optional boolean variable telling the function if it should 
+recourse into subdirectories on the hunt for zettel and return those as well.
+
 
 ## Options
 
