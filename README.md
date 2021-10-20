@@ -49,10 +49,22 @@ correctly from visual mode.
 The functions are again exposed as `<Plug>zettel_link_open` and
 `<Plug>zettel_link_make` respectively.
 
+### Index
 
 ```vim
+nnoremap <leader>w :lua require 'zettelkasten'.open_index()<cr>
 ```
 
+allows you to map going to your defined zettel index file.
+This functions by looking into your zettel directory for a file named 
+'index' and ending with the extension you set for your zettel.
+I.e. by default it will open 'index.md' in your zettel root directory.
+
+If you wish to open a different file by default, you can pass it into the
+lua function as a string, e.g. `:lua require 'zettelkasten'.open_index('myfile')`,
+though it will keep adding the zettel extension at the end.
+
+Indexing is also exposed as vim mapping `<Plug>zettel_index_open`
 
 ### Listing
 
