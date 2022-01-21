@@ -2,6 +2,19 @@
 
 A simple Zettelkasten plugin.
 
+Allows you to navigate through a zettelkasten using unique ID anchors, 
+and quickly create links for new zettel.
+
+These anchors, as of now, are simplified time stamps with 10 digits
+(YYMMDDHHmm),
+though the intention is to configure the plugin to be configurable for any ID anchor you have.
+Using ID anchors has the benefit that they are presumably unique, 
+so wherever your zettel is within the directory,
+or on the file system, will be where you end up.
+You can even change the file name of everything 
+(zettel, containing directory, etc.)
+and still end up at the correct note as long as the ID anchor is kept constant.
+
 Currently allows note link creation
 (automatically appending a time-based anchor to each created note)
 in markdown and wiki-link style, as well as following links to other notes,
@@ -10,7 +23,8 @@ wherever they are in the notes directory.
 Not much more has been implemented yet,
 but some options can already be configured by the user.
 
-Lastly, this plugin is in *very* rough shape,
+Lastly, a warning:
+Though it works, this plugin is in *very* rough development still,
 so don't expect too much as of now.
 It works what I desperately needed it to work for
 and thus the additional functionalities will only come trickling in,
@@ -150,6 +164,8 @@ where at the top the currently effective options with their defaults and availab
  * [ ] open zettel root directory / index page
     * [x] index.md at root directory
     * [x] custom index page name option
+* [ ] option for automatic template creation for new zettel (e.g. # Title\n\n# Related\n\n #References and similar)
+    * [ ] write on creation option, to create the actual zettel as soon as link has been created; or only when 'entering' zettel for first time
 
 ## TODO: maintenance
 
@@ -182,6 +198,7 @@ where at the top the currently effective options with their defaults and availab
 
 * [ ] refactor parsers (md/wiki) to be tables of functions/regex in options, so e.g. valid link detection can call `options.parser.isValidLink(link)` or transformation `options.parser.styleLink(anchor, text)`
   * [ ] use unified parser model (e.g. containing `turn-to-link()`, `parse-link()`) function
+  * [ ] enables multi-parsing option (e.g. follow *both* md and wiki-links)
   * [ ] enable custom parser supply
 * [ ] completion engine (e.g. for `completion-nvim`, look in completion_buffers/completion-tags for reference)
 * [ ] zettel caching for big directories
@@ -206,6 +223,7 @@ where at the top the currently effective options with their defaults and availab
     * [ ] several default options (index, home, wiki, ..)
     * [ ] optionally look for index file in sub-directories (could allow 'zettel' being directories as well)
     * [ ] if not existing could be auto-populated by adjacent zettel links (e.g. in same directory; backlinked; ..)
+
 
 ## Developing / Debugging
 

@@ -10,3 +10,17 @@ pipeline:
     image: imega/busted
     commands:
       - busted test -C lua
+
+  notify_matrix:
+    image: plugins/matrix
+    settings:
+      homeserver: https://matrix.org
+      roomid:
+        from_secret: matrix_roomid
+      userid:
+        from_secret: matrix_userid
+      accesstoken:
+        from_secret: matrix_token
+    when:
+      status: [ success, failure ]
+
