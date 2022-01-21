@@ -11,7 +11,7 @@ function A.open(link)
     if not link or not link.ref then return end
     local fname = f.get_zettel_by_anchor(link.anchor) or
                       f.get_zettel_by_ref(link.ref) or link.ref
-    vim.api.nvim_command(string.format("edit %s", fname))
+    vim.api.nvim_command(string.format("edit %s", vim.fn.fnameescape(fname)))
 end
 
 -- Gets the input at the current buffer cursor and opens it

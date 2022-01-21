@@ -1,7 +1,12 @@
 local action = require 'zettelkasten.action'
 
 before_each(function()
-    _G.vim = {g = {}, b = {}, loop = {fs_scandir = function() end}}
+    _G.vim = {
+        g = {},
+        b = {},
+        fn = {fnameescape = function(input) return input end},
+        loop = {fs_scandir = function() end}
+    }
 end)
 after_each(function() _G.vim = nil end)
 
