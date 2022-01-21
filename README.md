@@ -32,13 +32,15 @@ but there's not much here yet.
 
 ## Usage
 
-The one mapping you probably want to undertake (replacing the mapping as needed) is:
+All exposed functionality of the plugin can be reached either through lua bindings or through vim `<Plug>` mappings.
+
+The one mapping you probably want to undertake (replacing the mapping as needed) is the following link mapping:
 
 ### Linking
 
 ```vim
-nnoremap <cr> :lua require 'zettelkasten'.open_or_make_link()<cr>
-vnoremap <cr> :lua require 'zettelkasten'.open_or_make_link(true)<cr>
+nnoremap <cr> :lua require 'zettelkasten'.link_follow()<cr>
+vnoremap <cr> :lua require 'zettelkasten'.link_follow(true)<cr>
 ```
 
 This will allow you to create new links when over any text,
@@ -52,8 +54,8 @@ The function is also exposed as vim mapping `<Plug>zettel_link_follow`, so can b
 set via `map <cr> <Plug>zettel_link_follow` to get the same result as above.
 
 ```vim
-:lua require 'zettelkasten'.open_link()
-:lua require 'zettelkasten'.make_link(visualmode)
+:lua require 'zettelkasten'.link_open()
+:lua require 'zettelkasten'.link_make(visualmode)
 ```
 
 allows you to separate the link following and creation set by one function above.
@@ -66,7 +68,7 @@ The functions are again exposed as `<Plug>zettel_link_open` and
 ### Index
 
 ```vim
-nnoremap <leader>w :lua require 'zettelkasten'.open_index()<cr>
+nnoremap <leader>w :lua require 'zettelkasten'.index_open()<cr>
 ```
 
 allows you to map going to your defined zettel index file.
