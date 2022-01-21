@@ -91,7 +91,7 @@ describe("get_all_files", function()
                 end,
                 fs_scandir_next = function()
                     if #files == 0 then return nil end
-                    local fname, ftype = table.unpack(table.remove(files))
+                    local fname, ftype = unpack(table.remove(files))
                     return fname, ftype
                 end
             })

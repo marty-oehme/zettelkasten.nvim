@@ -1,0 +1,12 @@
+# branches: main
+
+pipeline:
+  code_lint:
+    image: pipelinecomponents/luacheck
+    commands:
+      - luacheck lua/zettelkasten
+
+  unit_tests:
+    image: imega/busted
+    commands:
+      - busted test -C lua
