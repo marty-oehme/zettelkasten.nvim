@@ -107,7 +107,7 @@ end)
 
 describe("create_link", function()
     it("substitutes the argument text with a link", function()
-        pending()
+        pending("not implemented")
         vim.fn = {getpos = function() return {1, 2, 3} end}
         vim.api = {
             nvim_buf_get_lines = function() return {"hi", 1, 2} end,

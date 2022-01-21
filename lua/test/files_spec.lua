@@ -19,7 +19,7 @@ local function simple_api_mock(files)
 end
 
 describe("get_anchors_and_paths", function()
-    before_each(function() get_api_mock = simple_api_mock end)
+    before_each(function() Get_api_mock = simple_api_mock end)
     after_each(function() _G.vim = nil end)
 
     it("should return anchor-keyed table pointing to filename of zettel",
@@ -27,7 +27,7 @@ describe("get_anchors_and_paths", function()
         local file_list = {}
         file_list["someDir/1910291645 this-is-a-testfile.md"] =
             "1910291645 this-is-a-testfile.md"
-        _G.vim = get_api_mock(file_list)
+        _G.vim = Get_api_mock(file_list)
 
         local expected = {
             ["1910291645"] = "someDir/1910291645 this-is-a-testfile.md"
@@ -43,7 +43,7 @@ describe("get_anchors_and_paths", function()
             ["1910271456 this-is-wrong-extension.txt"] = "1910271456 this-is-wrong-extension.txt",
             ["1812 this-is-ignored.md"] = "1812 this-is-ignored.md"
         }
-        _G.vim = get_api_mock(file_list)
+        _G.vim = Get_api_mock(file_list)
 
         local expected = {
             ["1910291645"] = "someDir/1910291645 this-is-a-testfile.md",
@@ -57,7 +57,7 @@ describe("get_anchors_and_paths", function()
             ["mydirectory/1910291645 myfile.wiki"] = "1910291645 myfile.wiki",
             ["mydirectory/2345678901 another.wiki"] = "2345678901 another.wiki"
         }
-        _G.vim = get_api_mock(file_list)
+        _G.vim = Get_api_mock(file_list)
         vim.g['zettel_extension'] = '.wiki'
 
         local expected = {
@@ -71,7 +71,7 @@ describe("get_anchors_and_paths", function()
 end)
 
 describe("get_all_files", function()
-    it("should recurse into directories if recursive argument passed in ",
+    it("should recurse into directories if recursive argument passed in",
        function()
         local files = {
             {"1910271456 testfile.md", "file"},
@@ -91,7 +91,7 @@ describe("get_all_files", function()
                 end,
                 fs_scandir_next = function()
                     if #files == 0 then return nil end
-                    local fname, ftype = unpack(table.remove(files))
+                    local fname, ftype = table.unpack(table.remove(files))
                     return fname, ftype
                 end
             })
